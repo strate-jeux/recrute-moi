@@ -1,0 +1,835 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Recrute-moi si tu peux</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body { box-sizing: border-box; }
+
+    .slide { display: none; height: 100%; min-height: 100%; }
+    .slide.active { display: flex; flex-direction: column; }
+
+    .timer-circle {
+      width: 200px; height: 200px; border-radius: 50%;
+      position: relative;
+      background: conic-gradient(from 0deg, #10b981 0deg, #e5e7eb 0deg);
+      transition: background 0.1s ease;
+    }
+    .timer-text {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2rem; font-weight: bold;
+    }
+
+    .match-card { perspective: 1000px; width: 100%; height: 320px; }
+    .card-inner {
+      position: relative; width: 100%; height: 100%;
+      text-align: center; transition: transform 0.8s;
+      transform-style: preserve-3d;
+    }
+    .match-card.revealed .card-inner { transform: rotateY(180deg); }
+
+    .card-face {
+      position: absolute; width: 100%; height: 100%;
+      -webkit-backface-visibility: hidden; backface-visibility: hidden;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      padding: 1rem; background: white; color: black;
+      border: 2px solid #e5e7eb;
+    }
+    .card-front { transform: rotateY(180deg); }
+
+    .pulse-animation { animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
+
+    .bounce-in { animation: bounceIn 0.8s ease; }
+    @keyframes bounceIn {
+      0% { transform: scale(0.3); opacity: 0; }
+      50% { transform: scale(1.05); }
+      70% { transform: scale(0.9); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    .startup-gradient { background: linear-gradient(135deg, #ff6b6b 0%, #4ecdc4 50%, #45b7d1 100%); }
+
+    /* Images (avatars / logos) */
+    .avatar-img, .logo-img {
+      width: 48px;
+      height: 48px;
+      border-radius: 9999px;
+      object-fit: cover;
+      border: 3px solid white;
+      box-shadow: 0 0 0 3px rgba(0,0,0,0.06);
+      background: #fff;
+      display: block;
+    }
+    .accent-ring {
+      border-radius: 9999px;
+      box-shadow: 0 0 0 4px rgba(255,255,255,0.75), 0 0 0 8px var(--accent);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .avatar-lg { width: 64px; height: 64px; }
+  </style>
+</head>
+
+<body class="h-full bg-gray-50">
+<main class="h-full">
+
+  <!-- Navigation -->
+  <nav class="fixed top-0 left-0 right-0 bg-white shadow-lg z-50 px-6 py-3">
+    <div class="flex justify-between items-center">
+      <div class="flex space-x-2">
+        <button onclick="previousSlide()"
+          class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors">
+          ← Précédent
+        </button>
+        <button onclick="nextSlide()"
+          class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+          Suivant →
+        </button>
+      </div>
+      <div class="text-sm text-gray-600">
+        Slide <span id="currentSlideNumber">1</span> / <span id="totalSlides">10</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Slide 1 -->
+  <div class="slide active startup-gradient items-center justify-center text-center text-white pt-20">
+    <div class="max-w-4xl mx-auto px-6">
+      <div class="mb-8">
+        <svg class="w-24 h-24 mx-auto mb-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+        </svg>
+      </div>
+      <h1 id="gameTitle" class="text-6xl font-bold mb-4 pulse-animation">Recrute-moi si tu peux</h1>
+      <p id="gameSubtitle" class="text-2xl opacity-90">Trouve ton match parfait !</p>
+
+      <p class="mt-8 text-lg opacity-90 max-w-3xl mx-auto">
+        Exemple : le recruteur <strong>Inolab</strong> cherche un développeur web.
+        Le candidat idéal est <strong>Nicolas Perez</strong>… mais personne ne le sait !
+      </p>
+    </div>
+  </div>
+
+  <!-- Slide 2: Rôles -->
+  <div class="slide bg-white items-center justify-center pt-20">
+    <div class="max-w-6xl mx-auto px-6">
+      <h2 class="text-4xl font-bold text-center mb-12 text-gray-800">Les Rôles</h2>
+      <div class="grid md:grid-cols-2 gap-8">
+        <div class="bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl p-8 text-white">
+          <div class="text-center mb-6">
+            <svg class="w-16 h-16 mx-auto mb-4" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+            </svg>
+            <h3 class="text-2xl font-bold">Candidats</h3>
+          </div>
+          <div class="space-y-4">
+            <div class="flex items-start"><span class="text-2xl mr-3">🎯</span>
+              <p><strong>Mission :</strong> Convaincre de votre potentiel et analyser l'entreprise</p>
+            </div>
+            <div class="flex items-start"><span class="text-2xl mr-3">💡</span>
+              <p>Mettez en avant vos compétences techniques et soft skills</p>
+            </div>
+            <div class="flex items-start"><span class="text-2xl mr-3">🔍</span>
+              <p>Évaluez si l'entreprise correspond à vos attentes</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-gradient-to-br from-green-500 to-teal-600 rounded-2xl p-8 text-white">
+          <div class="text-center mb-6">
+            <svg class="w-16 h-16 mx-auto mb-4" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M20 6h-2.18c.11-.31.18-.65.18-1a2.996 2.996 0 0 0-5.5-1.65l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2z" />
+            </svg>
+            <h3 class="text-2xl font-bold">Recruteurs</h3>
+          </div>
+          <div class="space-y-4">
+            <div class="flex items-start"><span class="text-2xl mr-3">📋</span>
+              <p><strong>Mission :</strong> Évaluer les compétences et l'adéquation au poste</p>
+            </div>
+            <div class="flex items-start"><span class="text-2xl mr-3">🤝</span>
+              <p>Analysez les soft skills et la personnalité</p>
+            </div>
+            <div class="flex items-start"><span class="text-2xl mr-3">⚡</span>
+              <p>Identifiez le potentiel et la motivation</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 3: Déroulé -->
+  <div class="slide bg-gradient-to-br from-purple-500 to-pink-500 items-center justify-center text-white pt-20">
+    <div class="max-w-4xl mx-auto px-6 text-center">
+      <h2 class="text-4xl font-bold mb-12">Déroulé des Entretiens</h2>
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="bg-white bg-opacity-20 rounded-2xl p-6 backdrop-blur-sm">
+          <h3 class="text-2xl font-bold mb-4">1er Tour</h3>
+          <p class="text-4xl font-bold mb-2" id="round1Text">10 min</p>
+          <p>Première impression</p>
+        </div>
+        <div class="bg-white bg-opacity-20 rounded-2xl p-6 backdrop-blur-sm">
+          <h3 class="text-2xl font-bold mb-4">2e Tour</h3>
+          <p class="text-4xl font-bold mb-2" id="round2Text">8 min</p>
+          <p>Approfondissement</p>
+        </div>
+        <div class="bg-white bg-opacity-20 rounded-2xl p-6 backdrop-blur-sm">
+          <h3 class="text-2xl font-bold mb-4">Tours suivants</h3>
+          <p class="text-4xl font-bold mb-2" id="round3Text">6 min</p>
+          <p>Décision finale</p>
+        </div>
+      </div>
+      <div class="mt-12">
+        <p class="text-xl opacity-90">🔄 Tournantes : chacun rencontre tout le monde</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 4: Timer 10 -->
+  <div class="slide bg-gradient-to-br from-red-500 to-orange-500 items-center justify-center text-white pt-20">
+    <div class="text-center">
+      <h2 class="text-4xl font-bold mb-8">1er Tour - 10 minutes</h2>
+      <div class="timer-circle mx-auto mb-8" id="timer10">
+        <div class="timer-text text-white" id="timerText10">10:00</div>
+      </div>
+      <div class="space-x-4">
+        <button onclick="startTimer('t10', 10, 'timer10', 'timerText10')"
+          class="px-8 py-4 bg-white text-red-500 rounded-full font-bold text-xl hover:bg-gray-100 transition-colors">
+          ▶️ Démarrer
+        </button>
+        <button onclick="pauseTimer('t10')"
+          class="px-8 py-4 bg-yellow-500 text-white rounded-full font-bold text-xl hover:bg-yellow-600 transition-colors">
+          ⏸️ Pause
+        </button>
+        <button onclick="resetTimer('t10', 10, 'timer10', 'timerText10')"
+          class="px-8 py-4 bg-gray-500 text-white rounded-full font-bold text-xl hover:bg-gray-600 transition-colors">
+          🔄 Reset
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 5: Timer 8 -->
+  <div class="slide bg-gradient-to-br from-blue-500 to-indigo-500 items-center justify-center text-white pt-20">
+    <div class="text-center">
+      <h2 class="text-4xl font-bold mb-8">2e Tour - 8 minutes</h2>
+      <div class="timer-circle mx-auto mb-8" id="timer8">
+        <div class="timer-text text-white" id="timerText8">8:00</div>
+      </div>
+      <div class="space-x-4">
+        <button onclick="startTimer('t8', 8, 'timer8', 'timerText8')"
+          class="px-8 py-4 bg-white text-blue-500 rounded-full font-bold text-xl hover:bg-gray-100 transition-colors">
+          ▶️ Démarrer
+        </button>
+        <button onclick="pauseTimer('t8')"
+          class="px-8 py-4 bg-yellow-500 text-white rounded-full font-bold text-xl hover:bg-yellow-600 transition-colors">
+          ⏸️ Pause
+        </button>
+        <button onclick="resetTimer('t8', 8, 'timer8', 'timerText8')"
+          class="px-8 py-4 bg-gray-500 text-white rounded-full font-bold text-xl hover:bg-gray-600 transition-colors">
+          🔄 Reset
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 6: Timer 6 -->
+  <div class="slide bg-gradient-to-br from-green-500 to-emerald-500 items-center justify-center text-white pt-20">
+    <div class="text-center">
+      <h2 class="text-4xl font-bold mb-8">Tours suivants - 6 minutes</h2>
+      <div class="timer-circle mx-auto mb-8" id="timer6">
+        <div class="timer-text text-white" id="timerText6">6:00</div>
+      </div>
+      <div class="space-x-4">
+        <button onclick="startTimer('t6', 6, 'timer6', 'timerText6')"
+          class="px-8 py-4 bg-white text-green-500 rounded-full font-bold text-xl hover:bg-gray-100 transition-colors">
+          ▶️ Démarrer
+        </button>
+        <button onclick="pauseTimer('t6')"
+          class="px-8 py-4 bg-yellow-500 text-white rounded-full font-bold text-xl hover:bg-yellow-600 transition-colors">
+          ⏸️ Pause
+        </button>
+        <button onclick="resetTimer('t6', 6, 'timer6', 'timerText6')"
+          class="px-8 py-4 bg-gray-500 text-white rounded-full font-bold text-xl hover:bg-gray-600 transition-colors">
+          🔄 Reset
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 7: Choix candidats -->
+  <div class="slide bg-white pt-20 overflow-y-auto">
+    <div class="max-w-6xl mx-auto px-6 pb-8">
+      <h2 class="text-4xl font-bold text-center mb-8 text-gray-800">Choix des Candidats</h2>
+      <p class="text-center text-gray-600 mb-8">Chaque candidat choisit son recruteur préféré</p>
+
+      <div class="bg-gray-50 rounded-2xl p-6">
+        <div class="grid gap-4" id="candidateChoices"></div>
+
+        <div class="text-center mt-6">
+          <button onclick="saveCandidateChoices(this)"
+            class="px-8 py-3 bg-blue-500 text-white rounded-lg font-bold hover:bg-blue-600 transition-colors">
+            💾 Sauvegarder les choix
+          </button>
+          <button onclick="resetAllChoices()"
+            class="px-8 py-3 bg-gray-600 text-white rounded-lg font-bold hover:bg-gray-700 transition-colors ml-2">
+            🧹 Réinitialiser
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 8: Choix recruteurs -->
+  <div class="slide bg-white pt-20 overflow-y-auto">
+    <div class="max-w-6xl mx-auto px-6 pb-8">
+      <h2 class="text-4xl font-bold text-center mb-8 text-gray-800">Choix des Recruteurs</h2>
+      <p class="text-center text-gray-600 mb-8">Chaque recruteur choisit son candidat préféré</p>
+
+      <div class="bg-gray-50 rounded-2xl p-6">
+        <div class="grid gap-4" id="recruiterChoices"></div>
+
+        <div class="text-center mt-6">
+          <button onclick="saveRecruiterChoices(this)"
+            class="px-8 py-3 bg-green-500 text-white rounded-lg font-bold hover:bg-green-600 transition-colors">
+            💾 Sauvegarder les choix
+          </button>
+          <button onclick="resetAllChoices()"
+            class="px-8 py-3 bg-gray-600 text-white rounded-lg font-bold hover:bg-gray-700 transition-colors ml-2">
+            🧹 Réinitialiser
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 9: Révélation -->
+  <div class="slide gradient-bg items-center justify-center text-white pt-20">
+    <div class="max-w-6xl mx-auto px-6 text-center">
+      <h2 class="text-4xl font-bold mb-8">🎉 Révélation des Matchs Parfaits 🎉</h2>
+
+      <div class="mb-8">
+        <button onclick="revealMatches()"
+          class="px-12 py-4 bg-yellow-500 text-gray-800 rounded-full font-bold text-2xl hover:bg-yellow-400 transition-colors pulse-animation">
+          🔮 Révéler les Matchs !
+        </button>
+      </div>
+
+      <div id="matchReveal" class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+    </div>
+  </div>
+
+  <!-- Slide 10: Scores -->
+  <div class="slide bg-white pt-20 overflow-y-auto">
+    <div class="max-w-6xl mx-auto px-6 pb-8">
+      <h2 class="text-4xl font-bold text-center mb-8 text-gray-800">🏆 Tableau des Scores</h2>
+
+      <div class="grid md:grid-cols-2 gap-8 mb-8">
+        <div class="bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl p-6 text-white">
+          <h3 class="text-2xl font-bold mb-4">💯 Système de Points</h3>
+          <div class="space-y-3">
+            <div class="flex items-center justify-between"><span>✅ Match parfait (mutuel)</span> <span class="font-bold">30 pts chacun</span></div>
+            <div class="flex items-center justify-between"><span>👤 Candidat choisit son match idéal (seul)</span> <span class="font-bold">20 / 10</span></div>
+            <div class="flex items-center justify-between"><span>🏢 Recruteur choisit son match idéal (seul)</span> <span class="font-bold">20 / 10</span></div>
+            <div class="flex items-center justify-between"><span>🚫 Aucun ne choisit son match idéal</span> <span class="font-bold">0</span></div>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-center">
+          <button onclick="calculateScores()"
+            class="px-8 py-4 bg-green-500 text-white rounded-2xl font-bold text-xl hover:bg-green-600 transition-colors bounce-in">
+            🧮 Calculer les Scores
+          </button>
+        </div>
+      </div>
+
+      <div id="scoresTable" class="bg-gray-50 rounded-2xl p-6">
+        <p class="text-center text-gray-500">Cliquez sur "Calculer les Scores" pour voir les résultats</p>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  /**********************
+   * ✅ IMPORTANT : MISE À JOUR DES CHEMINS D’IMAGES
+   * Mets tes fichiers dans /assets/candidates et /assets/companies
+   **********************/
+  const candidates = [
+    { name: "Faustine DUBOIS", color: "#FFAD5C", hiddenRole: "Administrateur Réseau", avatar: "assets/candidates/faustine.jpg" },
+    { name: "Nicolas PEREZ",  color: "#6890FC", hiddenRole: "Développeur Web",        avatar: "assets/candidates/nicolas.jpg" },
+    { name: "Ines ADAM",      color: "#FF94E8", hiddenRole: "Data Analyst",          avatar: "assets/candidates/ines.jpg" },
+    { name: "Aniq SAPA",      color: "#1CE8E5", hiddenRole: "Chef de Projet Informatique", avatar: "assets/candidates/aniq.jpg" },
+    { name: "Clyde MARTIN",   color: "#E1A9F5", hiddenRole: "Technicien Support Informatique", avatar: "assets/candidates/clyde.jpg" },
+    { name: "Lou DEBOUIS",    color: "#FFCB3B", hiddenRole: "Ingénieur Cybersécurité", avatar: "assets/candidates/lou.jpg" },
+    { name: "Marina COSTA",   color: "#ACE6B2", hiddenRole: "UI/UX Designer",        avatar: "assets/candidates/marina.jpg" },
+    { name: "Eden CETIN",     color: "#FF7575", hiddenRole: "Architecte Cloud",      avatar: "assets/candidates/eden.jpg" }
+  ];
+
+  const recruiters = [
+    { name: "Connex plus", color: "#15D4D1", hiddenRole: "Administrateur Réseau", logo: "assets/companies/connex-plus.png" },
+    { name: "Inolab",      color: "#FF94E8", hiddenRole: "Développeur Web",        logo: "assets/companies/inolab.png" },
+    { name: "Synergie +",  color: "#FFCB3B", hiddenRole: "Data Analyst",          logo: "assets/companies/synergie-plus.png" },
+    { name: "Agili pro",   color: "#FFAD5C", hiddenRole: "Chef de Projet Informatique", logo: "assets/companies/agili-pro.png" },
+    { name: "ARNAUD",      color: "#6890FC", hiddenRole: "Technicien Support Informatique", logo: "assets/companies/arnaud.png" },
+    { name: "Foxy",        color: "#E1A9F5", hiddenRole: "Ingénieur Cybersécurité", logo: "assets/companies/foxy.png" },
+    { name: "Agence tech", color: "#FF7575", hiddenRole: "UI/UX Designer",        logo: "assets/companies/agence-tech.png" },
+    { name: "Digi Word",   color: "#ACE6B2", hiddenRole: "Architecte Cloud",      logo: "assets/companies/digi-word.png" }
+  ];
+
+  const perfectMatches = {
+    "Faustine DUBOIS": "Connex plus",
+    "Nicolas PEREZ": "Inolab",
+    "Ines ADAM": "Synergie +",
+    "Aniq SAPA": "Agili pro",
+    "Clyde MARTIN": "ARNAUD",
+    "Lou DEBOUIS": "Foxy",
+    "Marina COSTA": "Agence tech",
+    "Eden CETIN": "Digi Word"
+  };
+
+  /**********************
+   * STOCKAGE localStorage
+   **********************/
+  const LS_KEYS = {
+    candidate: "sr_candidate_choices_v1",
+    recruiter: "sr_recruiter_choices_v1"
+  };
+
+  let candidateChoicesData = {};
+  let recruiterChoicesData = {};
+
+  function loadChoices() {
+    try {
+      candidateChoicesData = JSON.parse(localStorage.getItem(LS_KEYS.candidate) || "{}");
+      recruiterChoicesData = JSON.parse(localStorage.getItem(LS_KEYS.recruiter) || "{}");
+    } catch {
+      candidateChoicesData = {};
+      recruiterChoicesData = {};
+    }
+  }
+
+  function saveChoicesToLocalStorage() {
+    localStorage.setItem(LS_KEYS.candidate, JSON.stringify(candidateChoicesData));
+    localStorage.setItem(LS_KEYS.recruiter, JSON.stringify(recruiterChoicesData));
+  }
+
+  function resetAllChoices() {
+    candidateChoicesData = {};
+    recruiterChoicesData = {};
+    saveChoicesToLocalStorage();
+    generateCandidateChoices();
+    generateRecruiterChoices();
+    const scoresContainer = document.getElementById("scoresTable");
+    if (scoresContainer) {
+      scoresContainer.innerHTML = `<p class="text-center text-gray-500">Choix réinitialisés ✅</p>`;
+    }
+  }
+
+  /**********************
+   * SLIDES
+   **********************/
+  let currentSlide = 0;
+  const totalSlides = 10;
+
+  function nextSlide() {
+    const slides = document.querySelectorAll(".slide");
+    if (currentSlide < totalSlides - 1) {
+      slides[currentSlide].classList.remove("active");
+      currentSlide++;
+      slides[currentSlide].classList.add("active");
+      updateSlideCounter();
+    }
+  }
+
+  function previousSlide() {
+    const slides = document.querySelectorAll(".slide");
+    if (currentSlide > 0) {
+      slides[currentSlide].classList.remove("active");
+      currentSlide--;
+      slides[currentSlide].classList.add("active");
+      updateSlideCounter();
+    }
+  }
+
+  function updateSlideCounter() {
+    document.getElementById("currentSlideNumber").textContent = currentSlide + 1;
+    document.getElementById("totalSlides").textContent = totalSlides;
+  }
+
+  /**********************
+   * TIMERS indépendants
+   **********************/
+  const timers = {
+    t10: { interval: null, paused: false, current: 0, total: 10 * 60 },
+    t8:  { interval: null, paused: false, current: 0, total:  8 * 60 },
+    t6:  { interval: null, paused: false, current: 0, total:  6 * 60 }
+  };
+
+  function startTimer(timerKey, minutes, timerId, textId) {
+    const t = timers[timerKey];
+    if (!t) return;
+
+    clearInterval(t.interval);
+    t.paused = false;
+
+    if (t.current === 0) {
+      t.total = minutes * 60;
+      t.current = t.total;
+    }
+
+    t.interval = setInterval(() => {
+      if (!t.paused) {
+        t.current--;
+        updateTimerDisplay(timerId, textId, t.current, t.total);
+
+        if (t.current <= 0) {
+          clearInterval(t.interval);
+          document.getElementById(timerId).style.background =
+            "conic-gradient(from 0deg, #ef4444 360deg, #ef4444 360deg)";
+          document.getElementById(textId).textContent = "FINI !";
+          t.current = 0;
+        }
+      }
+    }, 1000);
+  }
+
+  function pauseTimer(timerKey) {
+    const t = timers[timerKey];
+    if (!t) return;
+    t.paused = !t.paused;
+  }
+
+  function resetTimer(timerKey, minutes, timerId, textId) {
+    const t = timers[timerKey];
+    if (!t) return;
+
+    clearInterval(t.interval);
+    t.total = minutes * 60;
+    t.current = t.total;
+    t.paused = false;
+    updateTimerDisplay(timerId, textId, t.current, t.total);
+  }
+
+  function updateTimerDisplay(timerId, textId, current, total) {
+    const m = Math.floor(current / 60);
+    const s = current % 60;
+    document.getElementById(textId).textContent = `${m}:${String(s).padStart(2, "0")}`;
+
+    const deg = ((total - current) / total) * 360;
+    const color = current > total * 0.3 ? "#10b981" : current > total * 0.1 ? "#f59e0b" : "#ef4444";
+
+    document.getElementById(timerId).style.background =
+      `conic-gradient(from 0deg, ${color} ${deg}deg, #e5e7eb ${deg}deg)`;
+  }
+
+  /**********************
+   * UI choix (avec images)
+   **********************/
+  function safeInitial(name) {
+    return (name && name.trim().length > 0) ? name.trim().charAt(0).toUpperCase() : "?";
+  }
+
+  function generateCandidateChoices() {
+    const container = document.getElementById("candidateChoices");
+    container.innerHTML = "";
+
+    candidates.forEach((candidate) => {
+      const div = document.createElement("div");
+      div.className = "flex items-center justify-between p-4 bg-white rounded-lg shadow-sm border-l-4";
+      div.style.borderLeftColor = candidate.color;
+
+      div.innerHTML = `
+        <div class="flex items-center">
+          <div class="accent-ring mr-4" style="--accent: ${candidate.color}">
+            <img
+              class="avatar-img"
+              src="${candidate.avatar}"
+              alt="Photo ${candidate.name}"
+              onerror="this.outerHTML='<div class=&quot;avatar-img flex items-center justify-center font-bold text-gray-800&quot; style=&quot;background:#fff;&quot;>${safeInitial(candidate.name)}</div>'"
+            />
+          </div>
+          <div>
+            <h4 class="font-bold text-gray-800">${candidate.name}</h4>
+            <p class="text-sm text-gray-600">Candidat</p>
+          </div>
+        </div>
+
+        <select class="candidate-select px-4 py-2 border rounded-lg" data-candidate="${candidate.name}">
+          <option value="">Choisir un recruteur...</option>
+          ${recruiters.map(r => `<option value="${r.name}">${r.name}</option>`).join("")}
+        </select>
+      `;
+
+      container.appendChild(div);
+    });
+
+    Object.keys(candidateChoicesData).forEach(name => {
+      const select = document.querySelector(`[data-candidate="${name}"]`);
+      if (select) select.value = candidateChoicesData[name];
+    });
+  }
+
+  function generateRecruiterChoices() {
+    const container = document.getElementById("recruiterChoices");
+    container.innerHTML = "";
+
+    recruiters.forEach((recruiter) => {
+      const div = document.createElement("div");
+      div.className = "flex items-center justify-between p-4 bg-white rounded-lg shadow-sm border-l-4";
+      div.style.borderLeftColor = recruiter.color;
+
+      div.innerHTML = `
+        <div class="flex items-center">
+          <div class="accent-ring mr-4" style="--accent: ${recruiter.color}">
+            <img
+              class="logo-img"
+              src="${recruiter.logo}"
+              alt="Logo ${recruiter.name}"
+              onerror="this.outerHTML='<div class=&quot;logo-img flex items-center justify-center&quot; style=&quot;background:#fff;&quot;>🏢</div>'"
+            />
+          </div>
+          <div>
+            <h4 class="font-bold text-gray-800">${recruiter.name}</h4>
+            <p class="text-sm text-gray-600">Entreprise</p>
+          </div>
+        </div>
+
+        <select class="recruiter-select px-4 py-2 border rounded-lg" data-recruiter="${recruiter.name}">
+          <option value="">Choisir un candidat...</option>
+          ${candidates.map(c => `<option value="${c.name}">${c.name}</option>`).join("")}
+        </select>
+      `;
+
+      container.appendChild(div);
+    });
+
+    Object.keys(recruiterChoicesData).forEach(name => {
+      const select = document.querySelector(`[data-recruiter="${name}"]`);
+      if (select) select.value = recruiterChoicesData[name];
+    });
+  }
+
+  function saveCandidateChoices(btn) {
+    const selects = document.querySelectorAll(".candidate-select");
+    btn.disabled = true;
+    btn.textContent = "💾 Sauvegarde...";
+
+    selects.forEach(select => {
+      const name = select.dataset.candidate;
+      const choice = select.value;
+      if (choice) candidateChoicesData[name] = choice;
+      else delete candidateChoicesData[name];
+    });
+
+    saveChoicesToLocalStorage();
+
+    btn.disabled = false;
+    btn.textContent = "✅ Sauvegardé !";
+    setTimeout(() => (btn.textContent = "💾 Sauvegarder les choix"), 1500);
+  }
+
+  function saveRecruiterChoices(btn) {
+    const selects = document.querySelectorAll(".recruiter-select");
+    btn.disabled = true;
+    btn.textContent = "💾 Sauvegarde...";
+
+    selects.forEach(select => {
+      const name = select.dataset.recruiter;
+      const choice = select.value;
+      if (choice) recruiterChoicesData[name] = choice;
+      else delete recruiterChoicesData[name];
+    });
+
+    saveChoicesToLocalStorage();
+
+    btn.disabled = false;
+    btn.textContent = "✅ Sauvegardé !";
+    setTimeout(() => (btn.textContent = "💾 Sauvegarder les choix"), 1500);
+  }
+
+  /**********************
+   * Révélation (flip) : postes visibles uniquement après clic
+   **********************/
+  function revealMatches() {
+    const container = document.getElementById("matchReveal");
+    container.innerHTML = "";
+
+    Object.keys(perfectMatches).forEach((candidateName, idx) => {
+      const recruiterName = perfectMatches[candidateName];
+      const candidateData = candidates.find(c => c.name === candidateName);
+      const recruiterData = recruiters.find(r => r.name === recruiterName);
+
+      const card = document.createElement("div");
+      card.className = "match-card cursor-pointer";
+      card.onclick = () => flipCard(card);
+
+      card.innerHTML = `
+        <div class="card-inner">
+          <div class="card-face card-back">
+            <div class="text-center p-8 h-full flex flex-col justify-center">
+              <h3 class="text-3xl font-bold mb-6">Binôme ${idx + 1}</h3>
+              <p class="text-xl opacity-75">Cliquez pour révéler</p>
+            </div>
+          </div>
+
+          <div class="card-face card-front">
+            <div class="text-center p-8 h-full flex flex-col justify-center space-y-6">
+
+              <div class="flex items-center justify-center">
+                <div class="accent-ring mr-4" style="--accent: ${candidateData.color}">
+                  <img class="avatar-img avatar-lg" src="${candidateData.avatar}" alt="Photo ${candidateName}"
+                       onerror="this.outerHTML='<div class=&quot;avatar-img avatar-lg flex items-center justify-center font-bold text-gray-800&quot; style=&quot;background:#fff;&quot;>${safeInitial(candidateName)}</div>'" />
+                </div>
+                <div class="text-left">
+                  <p class="font-bold text-xl text-black">${candidateName}</p>
+                  <p class="text-base text-gray-600">${candidateData.hiddenRole}</p>
+                </div>
+              </div>
+
+              <div class="text-4xl font-bold text-black">+</div>
+
+              <div class="flex items-center justify-center">
+                <div class="accent-ring mr-4" style="--accent: ${recruiterData.color}">
+                  <img class="logo-img avatar-lg" src="${recruiterData.logo}" alt="Logo ${recruiterName}"
+                       onerror="this.outerHTML='<div class=&quot;logo-img avatar-lg flex items-center justify-center&quot; style=&quot;background:#fff;&quot;>🏢</div>'" />
+                </div>
+                <div class="text-left">
+                  <p class="font-bold text-xl text-black">${recruiterName}</p>
+                  <p class="text-base text-gray-600">${recruiterData.hiddenRole}</p>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      `;
+
+      container.appendChild(card);
+    });
+  }
+
+  function flipCard(card) {
+    card.classList.toggle("revealed");
+  }
+
+  /**********************
+   * ✅ Scores corrigés (UNIQUEMENT perfectMatches)
+   **********************/
+  function calculateScores() {
+    const scores = {};
+    candidates.forEach(c => scores[c.name] = 0);
+    recruiters.forEach(r => scores[r.name] = 0);
+
+    Object.keys(perfectMatches).forEach(candidateName => {
+      const trueRecruiter = perfectMatches[candidateName];
+
+      const candidatePicked = candidateChoicesData[candidateName] || "";
+      const recruiterPicked = recruiterChoicesData[trueRecruiter] || "";
+
+      const candidateChoseTrueRecruiter = candidatePicked === trueRecruiter;
+      const recruiterChoseTrueCandidate = recruiterPicked === candidateName;
+
+      if (candidateChoseTrueRecruiter && recruiterChoseTrueCandidate) {
+        scores[candidateName] += 30;
+        scores[trueRecruiter] += 30;
+      } else if (candidateChoseTrueRecruiter && !recruiterChoseTrueCandidate) {
+        scores[candidateName] += 20;
+        scores[trueRecruiter] += 10;
+      } else if (!candidateChoseTrueRecruiter && recruiterChoseTrueCandidate) {
+        scores[trueRecruiter] += 20;
+        scores[candidateName] += 10;
+      }
+    });
+
+    displayScores(scores);
+  }
+
+  function displayScores(scores) {
+    const container = document.getElementById("scoresTable");
+
+    const candidateScores = candidates
+      .map(c => ({ name: c.name, role: c.hiddenRole, score: scores[c.name] || 0, color: c.color, avatar: c.avatar }))
+      .sort((a, b) => b.score - a.score);
+
+    const recruiterScores = recruiters
+      .map(r => ({ name: r.name, role: r.hiddenRole, score: scores[r.name] || 0, color: r.color, logo: r.logo }))
+      .sort((a, b) => b.score - a.score);
+
+    const medal = (i) => i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : "🏅";
+
+    container.innerHTML = `
+      <div class="grid md:grid-cols-2 gap-8">
+
+        <div>
+          <h3 class="text-2xl font-bold mb-4 text-center text-blue-600">🏆 Classement Candidats</h3>
+          <div class="space-y-2">
+            ${candidateScores.map((c, i) => `
+              <div class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm border-l-4"
+                   style="border-left-color:${c.color}">
+                <div class="flex items-center">
+                  <span class="text-2xl mr-3">${medal(i)}</span>
+                  <div class="accent-ring mr-3" style="--accent:${c.color}">
+                    <img class="avatar-img" src="${c.avatar}" alt="Photo ${c.name}"
+                      onerror="this.outerHTML='<div class=&quot;avatar-img flex items-center justify-center font-bold text-gray-800&quot; style=&quot;background:#fff;&quot;>${safeInitial(c.name)}</div>'" />
+                  </div>
+                  <div>
+                    <p class="font-bold">${c.name}</p>
+                    <p class="text-sm text-gray-600">${c.role}</p>
+                  </div>
+                </div>
+                <div class="text-2xl font-bold text-blue-600">${c.score} pts</div>
+              </div>
+            `).join("")}
+          </div>
+        </div>
+
+        <div>
+          <h3 class="text-2xl font-bold mb-4 text-center text-green-600">🏆 Classement Recruteurs</h3>
+          <div class="space-y-2">
+            ${recruiterScores.map((r, i) => `
+              <div class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm border-l-4"
+                   style="border-left-color:${r.color}">
+                <div class="flex items-center">
+                  <span class="text-2xl mr-3">${medal(i)}</span>
+                  <div class="accent-ring mr-3" style="--accent:${r.color}">
+                    <img class="logo-img" src="${r.logo}" alt="Logo ${r.name}"
+                      onerror="this.outerHTML='<div class=&quot;logo-img flex items-center justify-center&quot; style=&quot;background:#fff;&quot;>🏢</div>'" />
+                  </div>
+                  <div>
+                    <p class="font-bold">${r.name}</p>
+                    <p class="text-sm text-gray-600">${r.role}</p>
+                  </div>
+                </div>
+                <div class="text-2xl font-bold text-green-600">${r.score} pts</div>
+              </div>
+            `).join("")}
+          </div>
+        </div>
+
+      </div>
+    `;
+  }
+
+  /**********************
+   * INIT
+   **********************/
+  document.addEventListener("DOMContentLoaded", () => {
+    loadChoices();
+    updateSlideCounter();
+    generateCandidateChoices();
+    generateRecruiterChoices();
+  });
+</script>
+</body>
+</html>
