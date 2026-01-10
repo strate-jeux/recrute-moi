@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Recrute-moi si tu peux</title>
 
+  <base href="./" />
   <script src="https://cdn.tailwindcss.com"></script>
 
   <style>
@@ -13,19 +14,47 @@
     .slide { display: none; height: 100%; min-height: 100%; }
     .slide.active { display: flex; flex-direction: column; }
 
+    /* ===== Timers : rendu clean (pas de "fond moche") ===== */
+    .timer-shell{
+      background: rgba(255,255,255,0.92);
+      border: 1px solid rgba(0,0,0,0.06);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.10);
+      border-radius: 24px;
+      padding: 24px;
+      width: min(520px, 92vw);
+      margin: 0 auto;
+    }
+
     .timer-circle {
-      width: 200px; height: 200px; border-radius: 50%;
+      width: clamp(160px, 30vw, 220px);
+      height: clamp(160px, 30vw, 220px);
+      border-radius: 9999px;
       position: relative;
       background: conic-gradient(from 0deg, #10b981 0deg, #e5e7eb 0deg);
-      transition: background 0.1s ease;
+      transition: background 0.12s ease;
+      box-shadow: inset 0 0 0 10px rgba(255,255,255,0.85), 0 12px 28px rgba(0,0,0,0.12);
+      border: 1px solid rgba(0,0,0,0.06);
     }
     .timer-text {
       position: absolute; top: 50%; left: 50%;
       transform: translate(-50%, -50%);
-      font-size: 2rem; font-weight: bold;
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 800;
+      color: #111827; /* gris foncé */
+      letter-spacing: 0.5px;
     }
 
-    .match-card { perspective: 1000px; width: 100%; height: 320px; }
+    /* ===== Flip cards : responsive ===== */
+    .match-card {
+      perspective: 1000px;
+      width: 100%;
+      aspect-ratio: 4 / 3;                 /* garde une forme stable */
+      max-width: 420px;                    /* évite les énormes cartes sur grands écrans */
+      margin: 0 auto;                      /* centre dans la grille */
+    }
+    @media (min-width: 768px){
+      .match-card{ aspect-ratio: 5 / 4; }
+    }
     .card-inner {
       position: relative; width: 100%; height: 100%;
       text-align: center; transition: transform 0.8s;
@@ -36,10 +65,13 @@
     .card-face {
       position: absolute; width: 100%; height: 100%;
       -webkit-backface-visibility: hidden; backface-visibility: hidden;
-      border-radius: 12px;
+      border-radius: 18px;
       display: flex; align-items: center; justify-content: center;
-      padding: 1rem; background: white; color: black;
-      border: 2px solid #e5e7eb;
+      padding: clamp(14px, 2.2vw, 22px);
+      background: rgba(255,255,255,0.96);
+      color: #111827;
+      border: 1px solid rgba(0,0,0,0.06);
+      box-shadow: 0 14px 50px rgba(0,0,0,0.18);
     }
     .card-front { transform: rotateY(180deg); }
 
@@ -57,25 +89,51 @@
     .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
     .startup-gradient { background: linear-gradient(135deg, #ff6b6b 0%, #4ecdc4 50%, #45b7d1 100%); }
 
-    /* Images (avatars / logos) */
-    .avatar-img, .logo-img {
-      width: 48px;
-      height: 48px;
+    /* ===== Images (avatars / logos) : plus "pro" ===== */
+    .avatar-img{
+      width: 52px; height: 52px;
       border-radius: 9999px;
       object-fit: cover;
-      border: 3px solid white;
-      box-shadow: 0 0 0 3px rgba(0,0,0,0.06);
       background: #fff;
       display: block;
     }
+    .logo-img{
+      width: 52px; height: 52px;
+      border-radius: 14px;     /* logos en carré arrondi */
+      object-fit: contain;     /* logos mieux cadrés */
+      background: #fff;
+      padding: 6px;            /* évite que le logo touche les bords */
+      display: block;
+    }
+
     .accent-ring {
       border-radius: 9999px;
-      box-shadow: 0 0 0 4px rgba(255,255,255,0.75), 0 0 0 8px var(--accent);
+      box-shadow:
+        0 0 0 3px rgba(255,255,255,0.85),
+        0 0 0 7px var(--accent),
+        0 10px 28px rgba(0,0,0,0.14);
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      background: #fff;
     }
-    .avatar-lg { width: 64px; height: 64px; }
+
+    .avatar-lg { width: 70px; height: 70px; }
+
+    /* petit helper pour fallback propre */
+    .img-fallback{
+      width: 52px; height: 52px;
+      display:flex; align-items:center; justify-content:center;
+      background:#fff; color:#111827; font-weight:800;
+      border-radius: 9999px;
+    }
+    .logo-fallback{
+      width: 52px; height: 52px;
+      display:flex; align-items:center; justify-content:center;
+      background:#fff;
+      border-radius: 14px;
+      font-size: 22px;
+    }
   </style>
 </head>
 
@@ -194,79 +252,79 @@
     </div>
   </div>
 
-  <!-- Slide 4: Timer 10 -->
-  <div class="slide bg-gradient-to-br from-red-500 to-orange-500 items-center justify-center text-white pt-20">
-    <div class="text-center">
-      <h2 class="text-4xl font-bold mb-8">1er Tour - 10 minutes</h2>
+  <!-- Slide 4: Timer 10 (fond clean) -->
+  <div class="slide bg-gray-50 items-center justify-center pt-20">
+    <div class="timer-shell text-center">
+      <h2 class="text-4xl font-black mb-6 text-gray-900">1er Tour — 10 minutes</h2>
       <div class="timer-circle mx-auto mb-8" id="timer10">
-        <div class="timer-text text-white" id="timerText10">10:00</div>
+        <div class="timer-text" id="timerText10">10:00</div>
       </div>
-      <div class="space-x-4">
+      <div class="flex flex-wrap gap-3 justify-center">
         <button onclick="startTimer('t10', 10, 'timer10', 'timerText10')"
-          class="px-8 py-4 bg-white text-red-500 rounded-full font-bold text-xl hover:bg-gray-100 transition-colors">
+          class="px-7 py-3 bg-gray-900 text-white rounded-full font-bold text-lg hover:bg-black transition-colors">
           ▶️ Démarrer
         </button>
         <button onclick="pauseTimer('t10')"
-          class="px-8 py-4 bg-yellow-500 text-white rounded-full font-bold text-xl hover:bg-yellow-600 transition-colors">
+          class="px-7 py-3 bg-amber-500 text-white rounded-full font-bold text-lg hover:bg-amber-600 transition-colors">
           ⏸️ Pause
         </button>
         <button onclick="resetTimer('t10', 10, 'timer10', 'timerText10')"
-          class="px-8 py-4 bg-gray-500 text-white rounded-full font-bold text-xl hover:bg-gray-600 transition-colors">
+          class="px-7 py-3 bg-gray-200 text-gray-900 rounded-full font-bold text-lg hover:bg-gray-300 transition-colors">
           🔄 Reset
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Slide 5: Timer 8 -->
-  <div class="slide bg-gradient-to-br from-blue-500 to-indigo-500 items-center justify-center text-white pt-20">
-    <div class="text-center">
-      <h2 class="text-4xl font-bold mb-8">2e Tour - 8 minutes</h2>
+  <!-- Slide 5: Timer 8 (fond clean) -->
+  <div class="slide bg-gray-50 items-center justify-center pt-20">
+    <div class="timer-shell text-center">
+      <h2 class="text-4xl font-black mb-6 text-gray-900">2e Tour — 8 minutes</h2>
       <div class="timer-circle mx-auto mb-8" id="timer8">
-        <div class="timer-text text-white" id="timerText8">8:00</div>
+        <div class="timer-text" id="timerText8">8:00</div>
       </div>
-      <div class="space-x-4">
+      <div class="flex flex-wrap gap-3 justify-center">
         <button onclick="startTimer('t8', 8, 'timer8', 'timerText8')"
-          class="px-8 py-4 bg-white text-blue-500 rounded-full font-bold text-xl hover:bg-gray-100 transition-colors">
+          class="px-7 py-3 bg-gray-900 text-white rounded-full font-bold text-lg hover:bg-black transition-colors">
           ▶️ Démarrer
         </button>
         <button onclick="pauseTimer('t8')"
-          class="px-8 py-4 bg-yellow-500 text-white rounded-full font-bold text-xl hover:bg-yellow-600 transition-colors">
+          class="px-7 py-3 bg-amber-500 text-white rounded-full font-bold text-lg hover:bg-amber-600 transition-colors">
           ⏸️ Pause
         </button>
         <button onclick="resetTimer('t8', 8, 'timer8', 'timerText8')"
-          class="px-8 py-4 bg-gray-500 text-white rounded-full font-bold text-xl hover:bg-gray-600 transition-colors">
+          class="px-7 py-3 bg-gray-200 text-gray-900 rounded-full font-bold text-lg hover:bg-gray-300 transition-colors">
           🔄 Reset
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Slide 6: Timer 6 -->
-  <div class="slide bg-gradient-to-br from-green-500 to-emerald-500 items-center justify-center text-white pt-20">
-    <div class="text-center">
-      <h2 class="text-4xl font-bold mb-8">Tours suivants - 6 minutes</h2>
+  <!-- Slide 6: Timer 6 (fond clean) -->
+  <div class="slide bg-gray-50 items-center justify-center pt-20">
+    <div class="timer-shell text-center">
+      <h2 class="text-4xl font-black mb-6 text-gray-900">Tours suivants — 6 minutes</h2>
       <div class="timer-circle mx-auto mb-8" id="timer6">
-        <div class="timer-text text-white" id="timerText6">6:00</div>
+        <div class="timer-text" id="timerText6">6:00</div>
       </div>
-      <div class="space-x-4">
+      <div class="flex flex-wrap gap-3 justify-center">
         <button onclick="startTimer('t6', 6, 'timer6', 'timerText6')"
-          class="px-8 py-4 bg-white text-green-500 rounded-full font-bold text-xl hover:bg-gray-100 transition-colors">
+          class="px-7 py-3 bg-gray-900 text-white rounded-full font-bold text-lg hover:bg-black transition-colors">
           ▶️ Démarrer
         </button>
         <button onclick="pauseTimer('t6')"
-          class="px-8 py-4 bg-yellow-500 text-white rounded-full font-bold text-xl hover:bg-yellow-600 transition-colors">
+          class="px-7 py-3 bg-amber-500 text-white rounded-full font-bold text-lg hover:bg-amber-600 transition-colors">
           ⏸️ Pause
         </button>
         <button onclick="resetTimer('t6', 6, 'timer6', 'timerText6')"
-          class="px-8 py-4 bg-gray-500 text-white rounded-full font-bold text-xl hover:bg-gray-600 transition-colors">
+          class="px-7 py-3 bg-gray-200 text-gray-900 rounded-full font-bold text-lg hover:bg-gray-300 transition-colors">
           🔄 Reset
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Slide 7: Choix candidats -->
+  <!-- Slide 7 -->
   <div class="slide bg-white pt-20 overflow-y-auto">
     <div class="max-w-6xl mx-auto px-6 pb-8">
       <h2 class="text-4xl font-bold text-center mb-8 text-gray-800">Choix des Candidats</h2>
@@ -289,7 +347,7 @@
     </div>
   </div>
 
-  <!-- Slide 8: Choix recruteurs -->
+  <!-- Slide 8 -->
   <div class="slide bg-white pt-20 overflow-y-auto">
     <div class="max-w-6xl mx-auto px-6 pb-8">
       <h2 class="text-4xl font-bold text-center mb-8 text-gray-800">Choix des Recruteurs</h2>
@@ -312,7 +370,7 @@
     </div>
   </div>
 
-  <!-- Slide 9: Révélation -->
+  <!-- Slide 9 -->
   <div class="slide gradient-bg items-center justify-center text-white pt-20">
     <div class="max-w-6xl mx-auto px-6 text-center">
       <h2 class="text-4xl font-bold mb-8">🎉 Révélation des Matchs Parfaits 🎉</h2>
@@ -328,7 +386,7 @@
     </div>
   </div>
 
-  <!-- Slide 10: Scores -->
+  <!-- Slide 10 -->
   <div class="slide bg-white pt-20 overflow-y-auto">
     <div class="max-w-6xl mx-auto px-6 pb-8">
       <h2 class="text-4xl font-bold text-center mb-8 text-gray-800">🏆 Tableau des Scores</h2>
@@ -362,29 +420,28 @@
 
 <script>
   /**********************
-   * ✅ IMPORTANT : MISE À JOUR DES CHEMINS D’IMAGES
-   * Mets tes fichiers dans /assets/candidates et /assets/companies
+   * ✅ CHEMINS D’IMAGES (préfixe ./ pour éviter les soucis)
    **********************/
   const candidates = [
-    { name: "Faustine DUBOIS", color: "#FFAD5C", hiddenRole: "Administrateur Réseau", avatar: "assets/candidates/faustine.jpg" },
-    { name: "Nicolas PEREZ",  color: "#6890FC", hiddenRole: "Développeur Web",        avatar: "assets/candidates/nicolas.jpg" },
-    { name: "Ines ADAM",      color: "#FF94E8", hiddenRole: "Data Analyst",          avatar: "assets/candidates/ines.jpg" },
-    { name: "Aniq SAPA",      color: "#1CE8E5", hiddenRole: "Chef de Projet Informatique", avatar: "assets/candidates/aniq.jpg" },
-    { name: "Clyde MARTIN",   color: "#E1A9F5", hiddenRole: "Technicien Support Informatique", avatar: "assets/candidates/clyde.jpg" },
-    { name: "Lou DEBOUIS",    color: "#FFCB3B", hiddenRole: "Ingénieur Cybersécurité", avatar: "assets/candidates/lou.jpg" },
-    { name: "Marina COSTA",   color: "#ACE6B2", hiddenRole: "UI/UX Designer",        avatar: "assets/candidates/marina.jpg" },
-    { name: "Eden CETIN",     color: "#FF7575", hiddenRole: "Architecte Cloud",      avatar: "assets/candidates/eden.jpg" }
+    { name: "Faustine DUBOIS", color: "#FFAD5C", hiddenRole: "Administrateur Réseau", avatar: "./assets/candidates/faustine.jpg" },
+    { name: "Nicolas PEREZ",  color: "#6890FC", hiddenRole: "Développeur Web",        avatar: "./assets/candidates/nicolas.jpg" },
+    { name: "Ines ADAM",      color: "#FF94E8", hiddenRole: "Data Analyst",          avatar: "./assets/candidates/ines.jpg" },
+    { name: "Aniq SAPA",      color: "#1CE8E5", hiddenRole: "Chef de Projet Informatique", avatar: "./assets/candidates/aniq.jpg" },
+    { name: "Clyde MARTIN",   color: "#E1A9F5", hiddenRole: "Technicien Support Informatique", avatar: "./assets/candidates/clyde.jpg" },
+    { name: "Lou DEBOUIS",    color: "#FFCB3B", hiddenRole: "Ingénieur Cybersécurité", avatar: "./assets/candidates/lou.jpg" },
+    { name: "Marina COSTA",   color: "#ACE6B2", hiddenRole: "UI/UX Designer",        avatar: "./assets/candidates/marina.jpg" },
+    { name: "Eden CETIN",     color: "#FF7575", hiddenRole: "Architecte Cloud",      avatar: "./assets/candidates/eden.jpg" }
   ];
 
   const recruiters = [
-    { name: "Connex plus", color: "#15D4D1", hiddenRole: "Administrateur Réseau", logo: "assets/companies/connex-plus.png" },
-    { name: "Inolab",      color: "#FF94E8", hiddenRole: "Développeur Web",        logo: "assets/companies/inolab.png" },
-    { name: "Synergie +",  color: "#FFCB3B", hiddenRole: "Data Analyst",          logo: "assets/companies/synergie-plus.png" },
-    { name: "Agili pro",   color: "#FFAD5C", hiddenRole: "Chef de Projet Informatique", logo: "assets/companies/agili-pro.png" },
-    { name: "ARNAUD",      color: "#6890FC", hiddenRole: "Technicien Support Informatique", logo: "assets/companies/arnaud.png" },
-    { name: "Foxy",        color: "#E1A9F5", hiddenRole: "Ingénieur Cybersécurité", logo: "assets/companies/foxy.png" },
-    { name: "Agence tech", color: "#FF7575", hiddenRole: "UI/UX Designer",        logo: "assets/companies/agence-tech.png" },
-    { name: "Digi Word",   color: "#ACE6B2", hiddenRole: "Architecte Cloud",      logo: "assets/companies/digi-word.png" }
+    { name: "Connex plus", color: "#15D4D1", hiddenRole: "Administrateur Réseau", logo: "./assets/companies/connex-plus.png" },
+    { name: "Inolab",      color: "#FF94E8", hiddenRole: "Développeur Web",        logo: "./assets/companies/inolab.png" },
+    { name: "Synergie +",  color: "#FFCB3B", hiddenRole: "Data Analyst",          logo: "./assets/companies/synergie-plus.png" },
+    { name: "Agili pro",   color: "#FFAD5C", hiddenRole: "Chef de Projet Informatique", logo: "./assets/companies/agili-pro.png" },
+    { name: "ARNAUD",      color: "#6890FC", hiddenRole: "Technicien Support Informatique", logo: "./assets/companies/arnaud.png" },
+    { name: "Foxy",        color: "#E1A9F5", hiddenRole: "Ingénieur Cybersécurité", logo: "./assets/companies/foxy.png" },
+    { name: "Agence tech", color: "#FF7575", hiddenRole: "UI/UX Designer",        logo: "./assets/companies/agence-tech.png" },
+    { name: "Digi Word",   color: "#ACE6B2", hiddenRole: "Architecte Cloud",      logo: "./assets/companies/digi-word.png" }
   ];
 
   const perfectMatches = {
@@ -398,14 +455,7 @@
     "Eden CETIN": "Digi Word"
   };
 
-  /**********************
-   * STOCKAGE localStorage
-   **********************/
-  const LS_KEYS = {
-    candidate: "sr_candidate_choices_v1",
-    recruiter: "sr_recruiter_choices_v1"
-  };
-
+  const LS_KEYS = { candidate: "sr_candidate_choices_v1", recruiter: "sr_recruiter_choices_v1" };
   let candidateChoicesData = {};
   let recruiterChoicesData = {};
 
@@ -431,14 +481,10 @@
     generateCandidateChoices();
     generateRecruiterChoices();
     const scoresContainer = document.getElementById("scoresTable");
-    if (scoresContainer) {
-      scoresContainer.innerHTML = `<p class="text-center text-gray-500">Choix réinitialisés ✅</p>`;
-    }
+    if (scoresContainer) scoresContainer.innerHTML = `<p class="text-center text-gray-500">Choix réinitialisés ✅</p>`;
   }
 
-  /**********************
-   * SLIDES
-   **********************/
+  /* Slides */
   let currentSlide = 0;
   const totalSlides = 10;
 
@@ -451,7 +497,6 @@
       updateSlideCounter();
     }
   }
-
   function previousSlide() {
     const slides = document.querySelectorAll(".slide");
     if (currentSlide > 0) {
@@ -461,15 +506,12 @@
       updateSlideCounter();
     }
   }
-
   function updateSlideCounter() {
     document.getElementById("currentSlideNumber").textContent = currentSlide + 1;
     document.getElementById("totalSlides").textContent = totalSlides;
   }
 
-  /**********************
-   * TIMERS indépendants
-   **********************/
+  /* Timers */
   const timers = {
     t10: { interval: null, paused: false, current: 0, total: 10 * 60 },
     t8:  { interval: null, paused: false, current: 0, total:  8 * 60 },
@@ -533,9 +575,7 @@
       `conic-gradient(from 0deg, ${color} ${deg}deg, #e5e7eb ${deg}deg)`;
   }
 
-  /**********************
-   * UI choix (avec images)
-   **********************/
+  /* UI images */
   function safeInitial(name) {
     return (name && name.trim().length > 0) ? name.trim().charAt(0).toUpperCase() : "?";
   }
@@ -556,7 +596,9 @@
               class="avatar-img"
               src="${candidate.avatar}"
               alt="Photo ${candidate.name}"
-              onerror="this.outerHTML='<div class=&quot;avatar-img flex items-center justify-center font-bold text-gray-800&quot; style=&quot;background:#fff;&quot;>${safeInitial(candidate.name)}</div>'"
+              loading="lazy"
+              decoding="async"
+              onerror="this.outerHTML='<div class=&quot;img-fallback&quot;>${safeInitial(candidate.name)}</div>'"
             />
           </div>
           <div>
@@ -596,7 +638,9 @@
               class="logo-img"
               src="${recruiter.logo}"
               alt="Logo ${recruiter.name}"
-              onerror="this.outerHTML='<div class=&quot;logo-img flex items-center justify-center&quot; style=&quot;background:#fff;&quot;>🏢</div>'"
+              loading="lazy"
+              decoding="async"
+              onerror="this.outerHTML='<div class=&quot;logo-fallback&quot;>🏢</div>'"
             />
           </div>
           <div>
@@ -658,9 +702,7 @@
     setTimeout(() => (btn.textContent = "💾 Sauvegarder les choix"), 1500);
   }
 
-  /**********************
-   * Révélation (flip) : postes visibles uniquement après clic
-   **********************/
+  /* Reveal flip */
   function revealMatches() {
     const container = document.getElementById("matchReveal");
     container.innerHTML = "";
@@ -677,36 +719,39 @@
       card.innerHTML = `
         <div class="card-inner">
           <div class="card-face card-back">
-            <div class="text-center p-8 h-full flex flex-col justify-center">
-              <h3 class="text-3xl font-bold mb-6">Binôme ${idx + 1}</h3>
-              <p class="text-xl opacity-75">Cliquez pour révéler</p>
+            <div class="text-center h-full flex flex-col justify-center">
+              <h3 class="text-3xl font-black mb-3">Binôme ${idx + 1}</h3>
+              <p class="text-base text-gray-600">Cliquez pour révéler</p>
             </div>
           </div>
 
           <div class="card-face card-front">
-            <div class="text-center p-8 h-full flex flex-col justify-center space-y-6">
+            <div class="text-center h-full flex flex-col justify-center space-y-6">
 
               <div class="flex items-center justify-center">
                 <div class="accent-ring mr-4" style="--accent: ${candidateData.color}">
                   <img class="avatar-img avatar-lg" src="${candidateData.avatar}" alt="Photo ${candidateName}"
-                       onerror="this.outerHTML='<div class=&quot;avatar-img avatar-lg flex items-center justify-center font-bold text-gray-800&quot; style=&quot;background:#fff;&quot;>${safeInitial(candidateName)}</div>'" />
+                       loading="lazy" decoding="async"
+                       onerror="this.outerHTML='<div class=&quot;img-fallback&quot; style=&quot;width:70px;height:70px;&quot;>${safeInitial(candidateName)}</div>'" />
                 </div>
                 <div class="text-left">
-                  <p class="font-bold text-xl text-black">${candidateName}</p>
-                  <p class="text-base text-gray-600">${candidateData.hiddenRole}</p>
+                  <p class="font-black text-lg text-gray-900">${candidateName}</p>
+                  <p class="text-sm text-gray-600">${candidateData.hiddenRole}</p>
                 </div>
               </div>
 
-              <div class="text-4xl font-bold text-black">+</div>
+              <div class="text-4xl font-black text-gray-900">+</div>
 
               <div class="flex items-center justify-center">
                 <div class="accent-ring mr-4" style="--accent: ${recruiterData.color}">
-                  <img class="logo-img avatar-lg" src="${recruiterData.logo}" alt="Logo ${recruiterName}"
-                       onerror="this.outerHTML='<div class=&quot;logo-img avatar-lg flex items-center justify-center&quot; style=&quot;background:#fff;&quot;>🏢</div>'" />
+                  <img class="logo-img avatar-lg" style="width:70px;height:70px;border-radius:16px;padding:8px;"
+                       src="${recruiterData.logo}" alt="Logo ${recruiterName}"
+                       loading="lazy" decoding="async"
+                       onerror="this.outerHTML='<div class=&quot;logo-fallback&quot; style=&quot;width:70px;height:70px;border-radius:16px;&quot;>🏢</div>'" />
                 </div>
                 <div class="text-left">
-                  <p class="font-bold text-xl text-black">${recruiterName}</p>
-                  <p class="text-base text-gray-600">${recruiterData.hiddenRole}</p>
+                  <p class="font-black text-lg text-gray-900">${recruiterName}</p>
+                  <p class="text-sm text-gray-600">${recruiterData.hiddenRole}</p>
                 </div>
               </div>
 
@@ -719,13 +764,9 @@
     });
   }
 
-  function flipCard(card) {
-    card.classList.toggle("revealed");
-  }
+  function flipCard(card) { card.classList.toggle("revealed"); }
 
-  /**********************
-   * ✅ Scores corrigés (UNIQUEMENT perfectMatches)
-   **********************/
+  /* Scores (inchangé) */
   function calculateScores() {
     const scores = {};
     candidates.forEach(c => scores[c.name] = 0);
@@ -781,7 +822,8 @@
                   <span class="text-2xl mr-3">${medal(i)}</span>
                   <div class="accent-ring mr-3" style="--accent:${c.color}">
                     <img class="avatar-img" src="${c.avatar}" alt="Photo ${c.name}"
-                      onerror="this.outerHTML='<div class=&quot;avatar-img flex items-center justify-center font-bold text-gray-800&quot; style=&quot;background:#fff;&quot;>${safeInitial(c.name)}</div>'" />
+                      loading="lazy" decoding="async"
+                      onerror="this.outerHTML='<div class=&quot;img-fallback&quot;>${safeInitial(c.name)}</div>'" />
                   </div>
                   <div>
                     <p class="font-bold">${c.name}</p>
@@ -804,7 +846,8 @@
                   <span class="text-2xl mr-3">${medal(i)}</span>
                   <div class="accent-ring mr-3" style="--accent:${r.color}">
                     <img class="logo-img" src="${r.logo}" alt="Logo ${r.name}"
-                      onerror="this.outerHTML='<div class=&quot;logo-img flex items-center justify-center&quot; style=&quot;background:#fff;&quot;>🏢</div>'" />
+                      loading="lazy" decoding="async"
+                      onerror="this.outerHTML='<div class=&quot;logo-fallback&quot;>🏢</div>'" />
                   </div>
                   <div>
                     <p class="font-bold">${r.name}</p>
@@ -821,9 +864,6 @@
     `;
   }
 
-  /**********************
-   * INIT
-   **********************/
   document.addEventListener("DOMContentLoaded", () => {
     loadChoices();
     updateSlideCounter();
