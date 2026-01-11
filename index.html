@@ -11,8 +11,34 @@
   <style>
     body { box-sizing: border-box; }
 
-    .slide { display: none; height: 100%; min-height: 100%; }
-    .slide.active { display: flex; flex-direction: column; }
+html, body { height: 100%; }
+:root { --nav-h: 64px; } /* ajuste si besoin */
+
+main{
+  height: 100vh;
+  padding-top: var(--nav-h);
+}
+
+/* Chaque slide = la hauteur de l’écran (sans le menu) */
+.slide{
+  display: none;
+  height: calc(100vh - var(--nav-h));
+  min-height: calc(100vh - var(--nav-h));
+  overflow: hidden;
+  padding-top: 0 !important; /* neutralise tes pt-20 */
+}
+.slide.active{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Slides qui doivent scroller */
+.slide.scroll{
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 
     /* ===== Timers : rendu clean (pas de "fond moche") ===== */
     .timer-shell{
@@ -134,11 +160,55 @@
       border-radius: 14px;
       font-size: 22px;
     }
+/* Grille auto-fit: parfait pour iPad */
+#matchReveal{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  align-items: stretch;
+}
+
+/* cartes plus compactes + pas énormes */
+.match-card{
+  width: 100%;
+  max-width: 360px;
+  margin: 0 auto;
+  aspect-ratio: 4 / 3;
+  perspective: 1200px;
+}
+
+.card-face{
+  border-radius: 18px;
+  padding: 16px;
+}
+
+/* dos “classe” */
+.card-back{
+  background: rgba(255,255,255,0.14);
+  border: 1px solid rgba(255,255,255,0.22);
+  color: white;
+  backdrop-filter: blur(10px);
+}
+
+/* contenu : pas de débordement */
+.clamp-1{
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.clamp-2{
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
   </style>
 </head>
 
 <body class="h-full bg-gray-50">
-<main class="h-full">
+<main>
+
 
   <!-- Navigation -->
   <nav class="fixed top-0 left-0 right-0 bg-white shadow-lg z-50 px-6 py-3">
@@ -323,7 +393,7 @@
   </div>
 
   <!-- Slide 7 -->
-  <div class="slide bg-white pt-20 overflow-y-auto">
+<div class="slide scroll bg-white">
     <div class="max-w-6xl mx-auto px-6 pb-8">
       <h2 class="text-4xl font-bold text-center mb-8 text-gray-800">Choix des Candidats</h2>
       <p class="text-center text-gray-600 mb-8">Chaque candidat choisit son recruteur préféré</p>
@@ -346,7 +416,7 @@
   </div>
 
   <!-- Slide 8 -->
-  <div class="slide bg-white pt-20 overflow-y-auto">
+  <div class="slide scroll bg-white">
     <div class="max-w-6xl mx-auto px-6 pb-8">
       <h2 class="text-4xl font-bold text-center mb-8 text-gray-800">Choix des Recruteurs</h2>
       <p class="text-center text-gray-600 mb-8">Chaque recruteur choisit son candidat préféré</p>
@@ -369,7 +439,7 @@
   </div>
 
   <!-- Slide 9 -->
-  <div class="slide gradient-bg items-center justify-center text-white pt-20">
+  <div class="slide gradient-bg items-center justify-center text-white">
     <div class="max-w-6xl mx-auto px-6 text-center">
       <h2 class="text-4xl font-bold mb-8"> Révélation des Matchs Parfaits </h2>
 
@@ -380,12 +450,12 @@
         </button>
       </div>
 
-      <div id="matchReveal" class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+      <div id="matchReveal"></div>
     </div>
   </div>
 
   <!-- Slide 10 -->
-  <div class="slide bg-white pt-20 overflow-y-auto">
+  <div class="slide scroll bg-white">
     <div class="max-w-6xl mx-auto px-6 pb-8">
       <h2 class="text-4xl font-bold text-center mb-8 text-gray-800">🏆 Tableau des Scores</h2>
 
@@ -702,65 +772,79 @@
 
   /* Reveal flip */
   function revealMatches() {
-    const container = document.getElementById("matchReveal");
-    container.innerHTML = "";
+  const container = document.getElementById("matchReveal");
+  container.innerHTML = "";
 
-    Object.keys(perfectMatches).forEach((candidateName, idx) => {
-      const recruiterName = perfectMatches[candidateName];
-      const candidateData = candidates.find(c => c.name === candidateName);
-      const recruiterData = recruiters.find(r => r.name === recruiterName);
+  Object.keys(perfectMatches).forEach((candidateName, idx) => {
+    const recruiterName = perfectMatches[candidateName];
+    const candidateData = candidates.find(c => c.name === candidateName);
+    const recruiterData = recruiters.find(r => r.name === recruiterName);
 
-      const card = document.createElement("div");
-      card.className = "match-card cursor-pointer";
-      card.onclick = () => flipCard(card);
+    // Sécurité si jamais une donnée manque
+    if (!candidateData || !recruiterData) return;
 
-      card.innerHTML = `
-        <div class="card-inner">
-          <div class="card-face card-back">
-            <div class="text-center h-full flex flex-col justify-center">
-              <h3 class="text-3xl font-black mb-3">Binôme ${idx + 1}</h3>
-              <p class="text-base text-gray-600">Cliquez pour révéler</p>
-            </div>
-          </div>
+    const card = document.createElement("div");
+    card.className = "match-card cursor-pointer";
+    card.onclick = () => flipCard(card);
 
-          <div class="card-face card-front">
-            <div class="text-center h-full flex flex-col justify-center space-y-6">
-
-              <div class="flex items-center justify-center">
-                <div class="accent-ring mr-4" style="--accent: ${candidateData.color}">
-                  <img class="avatar-img avatar-lg" src="${candidateData.avatar}" alt="Photo ${candidateName}"
-                       loading="lazy" decoding="async"
-                       onerror="this.outerHTML='<div class=&quot;img-fallback&quot; style=&quot;width:70px;height:70px;&quot;>${safeInitial(candidateName)}</div>'" />
-                </div>
-                <div class="text-left">
-                  <p class="font-black text-lg text-gray-900">${candidateName}</p>
-                  <p class="text-sm text-gray-600">${candidateData.hiddenRole}</p>
-                </div>
-              </div>
-
-              <div class="text-4xl font-black text-gray-900">+</div>
-
-              <div class="flex items-center justify-center">
-                <div class="accent-ring mr-4" style="--accent: ${recruiterData.color}">
-                  <img class="logo-img avatar-lg" style="width:70px;height:70px;border-radius:16px;padding:8px;"
-                       src="${recruiterData.logo}" alt="Logo ${recruiterName}"
-                       loading="lazy" decoding="async"
-                       onerror="this.outerHTML='<div class=&quot;logo-fallback&quot; style=&quot;width:70px;height:70px;border-radius:16px;&quot;>🏢</div>'" />
-                </div>
-                <div class="text-left">
-                  <p class="font-black text-lg text-gray-900">${recruiterName}</p>
-                  <p class="text-sm text-gray-600">${recruiterData.hiddenRole}</p>
-                </div>
-              </div>
-
-            </div>
+    card.innerHTML = `
+      <div class="card-inner">
+        <!-- BACK -->
+        <div class="card-face card-back">
+          <div class="h-full w-full flex flex-col items-center justify-center text-center">
+            <div class="text-sm opacity-90 mb-2">Binôme</div>
+            <div class="text-5xl font-black">${idx + 1}</div>
+            <div class="mt-3 text-sm opacity-90">Appuie pour révéler</div>
           </div>
         </div>
-      `;
 
-      container.appendChild(card);
-    });
-  }
+        <!-- FRONT -->
+        <div class="card-face card-front">
+          <div class="h-full w-full flex flex-col justify-between">
+            
+            <div class="flex items-center gap-3">
+              <div class="accent-ring" style="--accent:${candidateData.color}">
+                <img class="avatar-img" style="width:64px;height:64px"
+                  src="${candidateData.avatar}"
+                  alt="Photo ${candidateName}"
+                  loading="lazy" decoding="async"
+                  onerror="this.outerHTML='<div class=&quot;img-fallback&quot; style=&quot;width:64px;height:64px&quot;>${safeInitial(candidateName)}</div>'"
+                />
+              </div>
+              <div class="text-left min-w-0">
+                <div class="text-xs font-semibold text-gray-500">Candidat</div>
+                <div class="font-black text-gray-900 clamp-1">${candidateName}</div>
+                <div class="text-sm text-gray-600 clamp-2">${candidateData.hiddenRole}</div>
+              </div>
+            </div>
+
+            <div class="text-2xl font-black text-gray-900 my-2">+</div>
+
+            <div class="flex items-center gap-3">
+              <div class="accent-ring" style="--accent:${recruiterData.color}">
+                <img class="logo-img" style="width:64px;height:64px;border-radius:16px;padding:8px"
+                  src="${recruiterData.logo}"
+                  alt="Logo ${recruiterName}"
+                  loading="lazy" decoding="async"
+                  onerror="this.outerHTML='<div class=&quot;logo-fallback&quot; style=&quot;width:64px;height:64px;border-radius:16px&quot;>🏢</div>'"
+                />
+              </div>
+              <div class="text-left min-w-0">
+                <div class="text-xs font-semibold text-gray-500">Recruteur</div>
+                <div class="font-black text-gray-900 clamp-1">${recruiterName}</div>
+                <div class="text-sm text-gray-600 clamp-2">${recruiterData.hiddenRole}</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    `;
+
+    container.appendChild(card);
+  });
+}
+
 
   function flipCard(card) { card.classList.toggle("revealed"); }
 
