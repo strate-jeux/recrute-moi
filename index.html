@@ -37,7 +37,9 @@ main{
 .slide.scroll{
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  justify-content: flex-start;   /* ✅ important */
 }
+
 
 
     /* ===== Timers : rendu clean (pas de "fond moche") ===== */
@@ -439,6 +441,7 @@ main{
   </div>
 
   <!-- Slide 9 -->
+   <div class="slide scroll bg-white">
   <div class="slide gradient-bg items-center justify-center text-white">
     <div class="max-w-6xl mx-auto px-6 text-center">
       <h2 class="text-4xl font-bold mb-8"> Révélation des Matchs Parfaits </h2>
