@@ -789,7 +789,7 @@ main{
     { name: "Clyde MARTIN",   color: "#E1A9F5", hiddenRole: "Technicien Support Informatique", avatar: "./candidates/clyde.jpg" },
     { name: "Lou DEBOUIS",    color: "#FFCB3B", hiddenRole: "Ingénieur Cybersécurité", avatar: "./candidates/lou.jpg" },
     { name: "Marina DACOSTA", color: "#ACE6B2", hiddenRole: "UI/UX Designer",        avatar: "./candidates/marina.jpg" },
-    { name: "Eden CETIN",     color: "#FF7575", hiddenRole: "Architecte Cloud",      avatar: "./candidates/eden.jpg" }
+    { name: "Eren CETIN",     color: "#FF7575", hiddenRole: "Architecte Cloud",      avatar: "./candidates/eden.jpg" }
   ];
 
   const recruiters = [
@@ -811,7 +811,7 @@ main{
     "Clyde MARTIN": "ARNAUD",
     "Lou DEBOUIS": "Foxy",
     "Marina DACOSTA": "Agence tech",
-    "Eden CETIN": "Digi World"
+    "Eren CETIN": "Digi World"
   };
 
   const LS_KEYS = { candidate: "sr_candidate_choices_v1", recruiter: "sr_recruiter_choices_v1" };
@@ -822,13 +822,16 @@ main{
     try {
       candidateChoicesData = JSON.parse(localStorage.getItem(LS_KEYS.candidate) || "{}");
       recruiterChoicesData = JSON.parse(localStorage.getItem(LS_KEYS.recruiter) || "{}");
-      // Migration : "Marina COSTA" → "Marina DACOSTA"
-      if (candidateChoicesData["Marina COSTA"]) {
-        candidateChoicesData["Marina DACOSTA"] = candidateChoicesData["Marina COSTA"];
-        delete candidateChoicesData["Marina COSTA"];
-      }
-      Object.keys(recruiterChoicesData).forEach(k => {
-        if (recruiterChoicesData[k] === "Marina COSTA") recruiterChoicesData[k] = "Marina DACOSTA";
+      // Migration des noms corrigés (anciens choix sauvegardés)
+      const renamed = { "Marina COSTA": "Marina DACOSTA", "Eden CETIN": "Eren CETIN" };
+      Object.entries(renamed).forEach(([oldName, newName]) => {
+        if (candidateChoicesData[oldName]) {
+          candidateChoicesData[newName] = candidateChoicesData[oldName];
+          delete candidateChoicesData[oldName];
+        }
+        Object.keys(recruiterChoicesData).forEach(k => {
+          if (recruiterChoicesData[k] === oldName) recruiterChoicesData[k] = newName;
+        });
       });
     } catch {
       candidateChoicesData = {};
