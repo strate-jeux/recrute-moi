@@ -379,6 +379,60 @@ main{
   animation: pulse 2s infinite;
 }
 
+/* ===== Harmonisation du reste du diapo ===== */
+.sj-nav{
+  background: rgba(6,26,92,.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,.12);
+  box-shadow: 0 8px 30px rgba(6,26,92,.35);
+}
+.sj-btn{
+  display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+  padding: .7rem 1.6rem;
+  border-radius: 9999px;
+  font-weight: 800;
+  transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+}
+.sj-btn:hover{ transform: translateY(-2px); }
+.sj-btn-sm{ padding: .5rem 1.1rem; font-size: .9rem; }
+.sj-btn-white{ background: #fff; color: #0E55E6; box-shadow: 0 10px 28px rgba(6,26,92,.35); }
+.sj-btn-white:hover{ box-shadow: 0 14px 36px rgba(6,26,92,.45); }
+.sj-btn-blue{ background: #0E55E6; color: #fff; box-shadow: 0 10px 28px rgba(14,85,230,.35); }
+.sj-btn-blue:hover{ background: #204ECF; }
+.sj-btn-ghost{ background: rgba(255,255,255,.12); color: #fff; border: 1px solid rgba(255,255,255,.3); }
+.sj-btn-ghost:hover{ background: rgba(255,255,255,.2); }
+.sj-btn-amber{ background: #FFB020; color: #061A5C; }
+.sj-btn-soft{ background: #E8EEFC; color: #0B2A7A; }
+.sj-btn-soft:hover{ background: #D6E1FB; }
+
+.sj-panel{
+  border-radius: 28px;
+  padding: clamp(16px, 2.5vw, 28px);
+  background: rgba(255,255,255,.12);
+  border: 1px solid rgba(255,255,255,.28);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 20px 60px rgba(6,26,92,.35);
+}
+.sj-h2{
+  font-weight: 900;
+  font-size: clamp(2rem, 4.5vw, 3rem);
+  text-shadow: 0 8px 30px rgba(6,26,92,.4);
+}
+.sj-step-num{
+  width: 48px; height: 48px; border-radius: 9999px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: #fff; color: #0E55E6; font-weight: 900; font-size: 1.2rem;
+  box-shadow: 0 8px 24px rgba(6,26,92,.35);
+}
+/* les lignes blanches générées (choix, scores) gardent un texte foncé */
+.sj-hero .bg-white{ color: #111827; }
+
+.sj-hero .timer-shell{
+  border-radius: 32px;
+  border: 1px solid rgba(255,255,255,.6);
+  box-shadow: 0 30px 80px rgba(6,26,92,.5);
+}
+
 @media (prefers-reduced-motion: reduce){
   .sj-hero, .sj-blob, .sj-floater, .sj-title .shine, .sj-in, .sj-vs, .sj-dot{ animation: none !important; }
 }
@@ -391,19 +445,17 @@ main{
 
 
   <!-- Navigation -->
-  <nav class="fixed top-0 left-0 right-0 bg-white shadow-lg z-50 px-6 py-3">
+  <nav class="sj-nav fixed top-0 left-0 right-0 z-50 px-6 py-3">
     <div class="flex justify-between items-center">
       <div class="flex space-x-2">
-        <button onclick="previousSlide()"
-          class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors">
+        <button onclick="previousSlide()" class="sj-btn sj-btn-sm sj-btn-ghost">
           ← Précédent
         </button>
-        <button onclick="nextSlide()"
-          class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+        <button onclick="nextSlide()" class="sj-btn sj-btn-sm sj-btn-white">
           Suivant →
         </button>
       </div>
-      <div class="text-sm text-gray-600">
+      <div class="text-sm font-semibold text-white/80">
         Slide <span id="currentSlideNumber">1</span> / <span id="totalSlides">10</span>
       </div>
     </div>
@@ -500,121 +552,139 @@ main{
 
   
 <!-- Slide 3: Déroulé -->
-<div class="slide items-center justify-center text-white pt-20" style="background-color:#0E55E6;">
-  <div class="max-w-4xl mx-auto px-6 text-center">
-    <h2 class="text-4xl font-bold mb-12">Déroulé des Entretiens</h2>
-    <div class="grid md:grid-cols-3 gap-8">
-      <div class="bg-white bg-opacity-20 rounded-2xl p-6 backdrop-blur-sm">
-        <h3 class="text-2xl font-bold mb-4">1er Tour</h3>
-        <p class="text-4xl font-bold mb-2" id="round1Text">10 min</p>
-        <p>Première impression</p>
+<div class="slide sj-hero items-center justify-center">
+  <div class="sj-grid"></div>
+  <div class="sj-blob b1"></div>
+  <div class="sj-blob b2"></div>
+  <div class="relative z-10 max-w-5xl mx-auto px-6 text-center w-full">
+    <div class="sj-in sj-d1 mb-3"><span class="sj-badge">Le déroulé</span></div>
+    <h2 class="sj-h2 sj-in sj-d2 mb-10">Déroulé des Entretiens</h2>
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="sj-role sj-in sj-d2" style="--role-accent:#3FA9FF;">
+        <div class="sj-step-num mb-4">1</div>
+        <h3 class="text-2xl font-black mb-3">1er Tour</h3>
+        <p class="text-5xl font-black mb-2" id="round1Text">10 min</p>
+        <p class="opacity-90">Première impression</p>
       </div>
-      <div class="bg-white bg-opacity-20 rounded-2xl p-6 backdrop-blur-sm">
-        <h3 class="text-2xl font-bold mb-4">2e Tour</h3>
-        <p class="text-4xl font-bold mb-2" id="round2Text">8 min</p>
-        <p>Approfondissement</p>
+      <div class="sj-role sj-in sj-d3" style="--role-accent:#7CC4FF;">
+        <div class="sj-step-num mb-4">2</div>
+        <h3 class="text-2xl font-black mb-3">2e Tour</h3>
+        <p class="text-5xl font-black mb-2" id="round2Text">8 min</p>
+        <p class="opacity-90">Approfondissement</p>
       </div>
-      <div class="bg-white bg-opacity-20 rounded-2xl p-6 backdrop-blur-sm">
-        <h3 class="text-2xl font-bold mb-4">Tours suivants</h3>
-        <p class="text-4xl font-bold mb-2" id="round3Text">6 min</p>
-        <p>Décision finale</p>
+      <div class="sj-role sj-in sj-d4" style="--role-accent:#061A5C;">
+        <div class="sj-step-num mb-4">3+</div>
+        <h3 class="text-2xl font-black mb-3">Tours suivants</h3>
+        <p class="text-5xl font-black mb-2" id="round3Text">6 min</p>
+        <p class="opacity-90">Décision finale</p>
       </div>
     </div>
-    <div class="mt-12">
-      <p class="text-xl opacity-90">🔄 Tournantes : chacun rencontre tout le monde</p>
+    <div class="mt-10 sj-in sj-d4">
+      <span class="sj-badge" style="text-transform:none; letter-spacing:0; font-size:1.05rem;">🔄 Tournantes : chacun rencontre tout le monde</span>
     </div>
   </div>
 </div>
 
-
-  <!-- Slide 4: Timer 10 (fond clean) -->
-  <div class="slide bg-gray-50 items-center justify-center pt-20">
-    <div class="timer-shell text-center">
-      <h2 class="text-4xl font-black mb-6 text-gray-900">1er Tour — 10 minutes</h2>
-      <div class="timer-circle mx-auto mb-8" id="timer10">
-        <div class="timer-text" id="timerText10">10:00</div>
-      </div>
-      <div class="flex flex-wrap gap-3 justify-center">
-        <button onclick="startTimer('t10', 10, 'timer10', 'timerText10')"
-          class="px-7 py-3 bg-gray-900 text-white rounded-full font-bold text-lg hover:bg-black transition-colors">
-          ▶️ Démarrer
-        </button>
-        <button onclick="pauseTimer('t10')"
-          class="px-7 py-3 bg-amber-500 text-white rounded-full font-bold text-lg hover:bg-amber-600 transition-colors">
-          ⏸️ Pause
-        </button>
-        <button onclick="resetTimer('t10', 10, 'timer10', 'timerText10')"
-          class="px-7 py-3 bg-gray-200 text-gray-900 rounded-full font-bold text-lg hover:bg-gray-300 transition-colors">
-          🔄 Reset
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Slide 5: Timer 8 (fond clean) -->
-  <div class="slide bg-gray-50 items-center justify-center pt-20">
-    <div class="timer-shell text-center">
-      <h2 class="text-4xl font-black mb-6 text-gray-900">2e Tour — 8 minutes</h2>
-      <div class="timer-circle mx-auto mb-8" id="timer8">
-        <div class="timer-text" id="timerText8">8:00</div>
-      </div>
-      <div class="flex flex-wrap gap-3 justify-center">
-        <button onclick="startTimer('t8', 8, 'timer8', 'timerText8')"
-          class="px-7 py-3 bg-gray-900 text-white rounded-full font-bold text-lg hover:bg-black transition-colors">
-          ▶️ Démarrer
-        </button>
-        <button onclick="pauseTimer('t8')"
-          class="px-7 py-3 bg-amber-500 text-white rounded-full font-bold text-lg hover:bg-amber-600 transition-colors">
-          ⏸️ Pause
-        </button>
-        <button onclick="resetTimer('t8', 8, 'timer8', 'timerText8')"
-          class="px-7 py-3 bg-gray-200 text-gray-900 rounded-full font-bold text-lg hover:bg-gray-300 transition-colors">
-          🔄 Reset
-        </button>
+  <!-- Slide: Timer 10 -->
+  <div class="slide sj-hero items-center justify-center">
+    <div class="sj-grid"></div>
+    <div class="sj-blob b1"></div>
+    <div class="sj-blob b2"></div>
+    <div class="relative z-10 px-6 w-full">
+      <div class="text-center mb-6 sj-in sj-d1"><span class="sj-badge"><span class="sj-dot"></span>Entretiens en cours</span></div>
+      <div class="timer-shell text-center sj-in sj-d2">
+        <h2 class="text-3xl md:text-4xl font-black mb-6" style="color:#061A5C">1er Tour — 10 minutes</h2>
+        <div class="timer-circle mx-auto mb-8" id="timer10">
+          <div class="timer-text" id="timerText10">10:00</div>
+        </div>
+        <div class="flex flex-wrap gap-3 justify-center">
+          <button onclick="startTimer('t10', 10, 'timer10', 'timerText10')" class="sj-btn sj-btn-blue text-lg">
+            ▶️ Démarrer
+          </button>
+          <button onclick="pauseTimer('t10')" class="sj-btn sj-btn-amber text-lg">
+            ⏸️ Pause
+          </button>
+          <button onclick="resetTimer('t10', 10, 'timer10', 'timerText10')" class="sj-btn sj-btn-soft text-lg">
+            🔄 Reset
+          </button>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Slide 6: Timer 6 (fond clean) -->
-  <div class="slide bg-gray-50 items-center justify-center pt-20">
-    <div class="timer-shell text-center">
-      <h2 class="text-4xl font-black mb-6 text-gray-900">Tours suivants — 6 minutes</h2>
-      <div class="timer-circle mx-auto mb-8" id="timer6">
-        <div class="timer-text" id="timerText6">6:00</div>
+  <!-- Slide: Timer 8 -->
+  <div class="slide sj-hero items-center justify-center">
+    <div class="sj-grid"></div>
+    <div class="sj-blob b1"></div>
+    <div class="sj-blob b2"></div>
+    <div class="relative z-10 px-6 w-full">
+      <div class="text-center mb-6 sj-in sj-d1"><span class="sj-badge"><span class="sj-dot"></span>Entretiens en cours</span></div>
+      <div class="timer-shell text-center sj-in sj-d2">
+        <h2 class="text-3xl md:text-4xl font-black mb-6" style="color:#061A5C">2e Tour — 8 minutes</h2>
+        <div class="timer-circle mx-auto mb-8" id="timer8">
+          <div class="timer-text" id="timerText8">8:00</div>
+        </div>
+        <div class="flex flex-wrap gap-3 justify-center">
+          <button onclick="startTimer('t8', 8, 'timer8', 'timerText8')" class="sj-btn sj-btn-blue text-lg">
+            ▶️ Démarrer
+          </button>
+          <button onclick="pauseTimer('t8')" class="sj-btn sj-btn-amber text-lg">
+            ⏸️ Pause
+          </button>
+          <button onclick="resetTimer('t8', 8, 'timer8', 'timerText8')" class="sj-btn sj-btn-soft text-lg">
+            🔄 Reset
+          </button>
+        </div>
       </div>
-      <div class="flex flex-wrap gap-3 justify-center">
-        <button onclick="startTimer('t6', 6, 'timer6', 'timerText6')"
-          class="px-7 py-3 bg-gray-900 text-white rounded-full font-bold text-lg hover:bg-black transition-colors">
-          ▶️ Démarrer
-        </button>
-        <button onclick="pauseTimer('t6')"
-          class="px-7 py-3 bg-amber-500 text-white rounded-full font-bold text-lg hover:bg-amber-600 transition-colors">
-          ⏸️ Pause
-        </button>
-        <button onclick="resetTimer('t6', 6, 'timer6', 'timerText6')"
-          class="px-7 py-3 bg-gray-200 text-gray-900 rounded-full font-bold text-lg hover:bg-gray-300 transition-colors">
-          🔄 Reset
-        </button>
+    </div>
+  </div>
+
+  <!-- Slide: Timer 6 -->
+  <div class="slide sj-hero items-center justify-center">
+    <div class="sj-grid"></div>
+    <div class="sj-blob b1"></div>
+    <div class="sj-blob b2"></div>
+    <div class="relative z-10 px-6 w-full">
+      <div class="text-center mb-6 sj-in sj-d1"><span class="sj-badge"><span class="sj-dot"></span>Entretiens en cours</span></div>
+      <div class="timer-shell text-center sj-in sj-d2">
+        <h2 class="text-3xl md:text-4xl font-black mb-6" style="color:#061A5C">Tours suivants — 6 minutes</h2>
+        <div class="timer-circle mx-auto mb-8" id="timer6">
+          <div class="timer-text" id="timerText6">6:00</div>
+        </div>
+        <div class="flex flex-wrap gap-3 justify-center">
+          <button onclick="startTimer('t6', 6, 'timer6', 'timerText6')" class="sj-btn sj-btn-blue text-lg">
+            ▶️ Démarrer
+          </button>
+          <button onclick="pauseTimer('t6')" class="sj-btn sj-btn-amber text-lg">
+            ⏸️ Pause
+          </button>
+          <button onclick="resetTimer('t6', 6, 'timer6', 'timerText6')" class="sj-btn sj-btn-soft text-lg">
+            🔄 Reset
+          </button>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- Slide 7 -->
-<div class="slide scroll bg-white">
-    <div class="max-w-6xl mx-auto px-6 pb-8">
-      <h2 class="text-4xl font-bold text-center mb-8 text-gray-800">Choix des Candidats</h2>
-      <p class="text-center text-gray-600 mb-8">Chaque candidat choisit son recruteur préféré</p>
+  <div class="slide scroll sj-hero">
+    <div class="sj-blob b1"></div>
+    <div class="sj-blob b2"></div>
+    <div class="relative z-10 max-w-6xl mx-auto px-6 pt-8 pb-10 w-full">
+      <div class="text-center mb-8">
+        <div class="sj-in sj-d1 mb-3"><span class="sj-badge">Côté candidats</span></div>
+        <h2 class="sj-h2 sj-in sj-d2 mb-2">Choix des Candidats</h2>
+        <p class="sj-in sj-d2 text-lg opacity-90">Chaque candidat choisit son recruteur préféré</p>
+      </div>
 
-      <div class="bg-gray-50 rounded-2xl p-6">
+      <div class="sj-panel sj-in sj-d3">
         <div class="grid gap-4" id="candidateChoices"></div>
 
-        <div class="text-center mt-6">
-          <button onclick="saveCandidateChoices(this)"
-            class="px-8 py-3 bg-blue-500 text-white rounded-lg font-bold hover:bg-blue-600 transition-colors">
+        <div class="flex flex-wrap gap-3 justify-center mt-6">
+          <button onclick="saveCandidateChoices(this)" class="sj-btn sj-btn-white">
             💾 Sauvegarder les choix
           </button>
-          <button onclick="resetAllChoices()"
-            class="px-8 py-3 bg-gray-600 text-white rounded-lg font-bold hover:bg-gray-700 transition-colors ml-2">
+          <button onclick="resetAllChoices()" class="sj-btn sj-btn-ghost">
             🧹 Réinitialiser
           </button>
         </div>
@@ -623,21 +693,24 @@ main{
   </div>
 
   <!-- Slide 8 -->
-  <div class="slide scroll bg-white">
-    <div class="max-w-6xl mx-auto px-6 pb-8">
-      <h2 class="text-4xl font-bold text-center mb-8 text-gray-800">Choix des Recruteurs</h2>
-      <p class="text-center text-gray-600 mb-8">Chaque recruteur choisit son candidat préféré</p>
+  <div class="slide scroll sj-hero">
+    <div class="sj-blob b1"></div>
+    <div class="sj-blob b2"></div>
+    <div class="relative z-10 max-w-6xl mx-auto px-6 pt-8 pb-10 w-full">
+      <div class="text-center mb-8">
+        <div class="sj-in sj-d1 mb-3"><span class="sj-badge">Côté recruteurs</span></div>
+        <h2 class="sj-h2 sj-in sj-d2 mb-2">Choix des Recruteurs</h2>
+        <p class="sj-in sj-d2 text-lg opacity-90">Chaque recruteur choisit son candidat préféré</p>
+      </div>
 
-      <div class="bg-gray-50 rounded-2xl p-6">
+      <div class="sj-panel sj-in sj-d3">
         <div class="grid gap-4" id="recruiterChoices"></div>
 
-        <div class="text-center mt-6">
-          <button onclick="saveRecruiterChoices(this)"
-            class="px-8 py-3 bg-green-500 text-white rounded-lg font-bold hover:bg-green-600 transition-colors">
+        <div class="flex flex-wrap gap-3 justify-center mt-6">
+          <button onclick="saveRecruiterChoices(this)" class="sj-btn sj-btn-white">
             💾 Sauvegarder les choix
           </button>
-          <button onclick="resetAllChoices()"
-            class="px-8 py-3 bg-gray-600 text-white rounded-lg font-bold hover:bg-gray-700 transition-colors ml-2">
+          <button onclick="resetAllChoices()" class="sj-btn sj-btn-ghost">
             🧹 Réinitialiser
           </button>
         </div>
@@ -645,50 +718,54 @@ main{
     </div>
   </div>
 
+  <!-- Slide 9 -->
+  <div class="slide scroll sj-hero items-center">
+    <div class="sj-blob b1"></div>
+    <div class="sj-blob b2"></div>
+    <div class="relative z-10 max-w-6xl mx-auto px-6 pt-8 pb-10 text-center w-full">
+      <div class="sj-in sj-d1 mb-3"><span class="sj-badge"><span class="sj-dot"></span>Moment de vérité</span></div>
+      <h2 class="sj-h2 sj-in sj-d2 mb-6">Révélation des Matchs Parfaits</h2>
 
-   <!-- Slide 9 -->
-<div class="slide scroll gradient-bg items-center text-white">
-  <div class="max-w-6xl mx-auto px-6 text-center w-full">
-    <h2 class="text-4xl font-bold mb-6">Révélation des Matchs Parfaits</h2>
+      <div class="mb-8 sj-in sj-d3">
+        <button onclick="revealMatches()" class="sj-cta pulse-animation" style="font-size:1.5rem; padding:1.1rem 2.8rem;">
+          Révéler les Matchs ! ✨
+        </button>
+      </div>
 
-    <div class="mb-6">
-      <button onclick="revealMatches()"
-        class="px-12 py-4 bg-yellow-500 text-gray-800 rounded-full font-bold text-2xl hover:bg-yellow-400 transition-colors pulse-animation">
-        Révéler les Matchs !
-      </button>
+      <div id="matchReveal"></div>
     </div>
-
-    <div id="matchReveal"></div>
   </div>
-</div>
-
 
   <!-- Slide 10 -->
-  <div class="slide scroll bg-white">
-    <div class="max-w-6xl mx-auto px-6 pb-8">
-      <h2 class="text-4xl font-bold text-center mb-8 text-gray-800">🏆 Tableau des Scores</h2>
+  <div class="slide scroll sj-hero">
+    <div class="sj-blob b1"></div>
+    <div class="sj-blob b2"></div>
+    <div class="relative z-10 max-w-6xl mx-auto px-6 pt-8 pb-10 w-full">
+      <div class="text-center mb-8">
+        <div class="sj-in sj-d1 mb-3"><span class="sj-badge">Résultats</span></div>
+        <h2 class="sj-h2 sj-in sj-d2">🏆 Tableau des Scores</h2>
+      </div>
 
       <div class="grid md:grid-cols-2 gap-8 mb-8">
-        <div class="rounded-2xl p-8 text-white" style="background-color: #0E55E6;">
-          <h3 class="text-2xl font-bold mb-4">💯 Système de Points</h3>
-          <div class="space-y-3">
-            <div class="flex items-center justify-between"><span>✅ Match parfait (mutuel)</span> <span class="font-bold">30 pts chacun</span></div>
-            <div class="flex items-center justify-between"><span>👤 Candidat choisit son match idéal (seul)</span> <span class="font-bold">20 / 10</span></div>
-            <div class="flex items-center justify-between"><span>🏢 Recruteur choisit son match idéal (seul)</span> <span class="font-bold">20 / 10</span></div>
-            <div class="flex items-center justify-between"><span>🚫 Aucun ne choisit son match idéal</span> <span class="font-bold">0</span></div>
+        <div class="sj-role sj-in sj-d2" style="--role-accent:#3FA9FF;">
+          <h3 class="text-2xl font-black mb-4">💯 Système de Points</h3>
+          <div class="space-y-2">
+            <div class="sj-point justify-between"><span>✅ Match parfait (mutuel)</span> <span class="font-black whitespace-nowrap">30 pts chacun</span></div>
+            <div class="sj-point justify-between"><span>👤 Candidat choisit son match idéal (seul)</span> <span class="font-black whitespace-nowrap">20 / 10</span></div>
+            <div class="sj-point justify-between"><span>🏢 Recruteur choisit son match idéal (seul)</span> <span class="font-black whitespace-nowrap">20 / 10</span></div>
+            <div class="sj-point justify-between"><span>🚫 Aucun ne choisit son match idéal</span> <span class="font-black">0</span></div>
           </div>
         </div>
 
-        <div class="flex items-center justify-center">
-          <button onclick="calculateScores()"
-            class="px-8 py-4 bg-green-500 text-white rounded-2xl font-bold text-xl hover:bg-green-600 transition-colors bounce-in">
-            Calculer les Scores
+        <div class="flex items-center justify-center sj-in sj-d3">
+          <button onclick="calculateScores()" class="sj-cta bounce-in" style="font-size:1.4rem; padding:1.1rem 2.6rem;">
+            Calculer les Scores <span class="arrow">→</span>
           </button>
         </div>
       </div>
 
-      <div id="scoresTable" class="bg-gray-50 rounded-2xl p-6">
-        <p class="text-center text-gray-500">Cliquez sur "Calculer les Scores" pour voir les résultats</p>
+      <div id="scoresTable" class="sj-panel sj-in sj-d4">
+        <p class="text-center text-white/80">Cliquez sur "Calculer les Scores" pour voir les résultats</p>
       </div>
     </div>
   </div>
@@ -766,7 +843,7 @@ main{
     generateCandidateChoices();
     generateRecruiterChoices();
     const scoresContainer = document.getElementById("scoresTable");
-    if (scoresContainer) scoresContainer.innerHTML = `<p class="text-center text-gray-500">Choix réinitialisés ✅</p>`;
+    if (scoresContainer) scoresContainer.innerHTML = `<p class="text-center text-white/80">Choix réinitialisés ✅</p>`;
   }
 
   /* Slides */
@@ -1112,7 +1189,7 @@ main{
       <div class="grid md:grid-cols-2 gap-8">
 
         <div>
-          <h3 class="text-2xl font-bold mb-4 text-center text-blue-600">🏆 Classement Candidats</h3>
+          <h3 class="text-2xl font-black mb-4 text-center text-white">🏆 Classement Candidats</h3>
           <div class="space-y-2">
             ${candidateScores.map((c, i) => `
               <div class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm border-l-4"
@@ -1129,14 +1206,14 @@ main{
                     <p class="text-sm text-gray-600">${c.role}</p>
                   </div>
                 </div>
-                <div class="text-2xl font-bold text-blue-600">${c.score} pts</div>
+                <div class="text-2xl font-black" style="color:#0E55E6">${c.score} pts</div>
               </div>
             `).join("")}
           </div>
         </div>
 
         <div>
-          <h3 class="text-2xl font-bold mb-4 text-center text-green-600">🏆 Classement Recruteurs</h3>
+          <h3 class="text-2xl font-black mb-4 text-center text-white">🏆 Classement Recruteurs</h3>
           <div class="space-y-2">
             ${recruiterScores.map((r, i) => `
               <div class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm border-l-4"
@@ -1153,7 +1230,7 @@ main{
                     <p class="text-sm text-gray-600">${r.role}</p>
                   </div>
                 </div>
-                <div class="text-2xl font-bold text-green-600">${r.score} pts</div>
+                <div class="text-2xl font-black" style="color:#061A5C">${r.score} pts</div>
               </div>
             `).join("")}
           </div>
