@@ -427,6 +427,11 @@ main{
 /* les lignes blanches générées (choix, scores) gardent un texte foncé */
 .sj-hero .bg-white{ color: #111827; }
 
+/* classement : le score reste sur une ligne, le texte de gauche s'adapte */
+#scoresTable .bg-white > div:first-child{ min-width: 0; }
+#scoresTable .accent-ring{ flex: none; }
+#scoresTable .bg-white > div:last-child{ flex: none; white-space: nowrap; margin-left: .75rem; }
+
 .sj-hero .timer-shell{
   border-radius: 32px;
   border: 1px solid rgba(255,255,255,.6);
