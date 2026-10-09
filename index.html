@@ -205,6 +205,184 @@ main{
   -webkit-box-orient: vertical;
 }
 
+/* ===== Slides 1 & 2 : univers bleu STRATE-JEUX ===== */
+.sj-hero{
+  position: relative;
+  isolation: isolate;
+  color: #fff;
+  background: linear-gradient(135deg, #061A5C 0%, #0E55E6 45%, #204ECF 70%, #3FA9FF 100%);
+  background-size: 300% 300%;
+  animation: sjGradient 14s ease infinite;
+}
+@keyframes sjGradient{
+  0%,100%{ background-position: 0% 50%; }
+  50%{ background-position: 100% 50%; }
+}
+
+/* halos lumineux en mouvement */
+.sj-blob{
+  position: absolute; z-index: -1;
+  border-radius: 9999px;
+  filter: blur(60px);
+  opacity: .55;
+  animation: sjFloat 12s ease-in-out infinite;
+}
+.sj-blob.b1{ width: 42vw; height: 42vw; background: #3FA9FF; top: -12vw; left: -10vw; }
+.sj-blob.b2{ width: 36vw; height: 36vw; background: #061A5C; bottom: -14vw; right: -8vw; animation-delay: -4s; }
+.sj-blob.b3{ width: 22vw; height: 22vw; background: #7CC4FF; top: 40%; right: 18%; animation-delay: -8s; opacity: .35; }
+@keyframes sjFloat{
+  0%,100%{ transform: translate(0,0) scale(1); }
+  33%{ transform: translate(4vw,3vw) scale(1.08); }
+  66%{ transform: translate(-3vw,2vw) scale(.95); }
+}
+
+/* grille discrète */
+.sj-grid{
+  position: absolute; inset: 0; z-index: -1;
+  background-image:
+    linear-gradient(rgba(255,255,255,.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.07) 1px, transparent 1px);
+  background-size: 48px 48px;
+  -webkit-mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%);
+          mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%);
+}
+
+/* avatars / logos flottants autour du titre */
+.sj-floaters{ position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.sj-floater{
+  position: absolute;
+  width: clamp(44px, 6vw, 76px); height: clamp(44px, 6vw, 76px);
+  border-radius: 9999px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(255,255,255,.9), 0 12px 30px rgba(6,26,92,.45);
+  animation: sjBob 6s ease-in-out infinite, sjPop .7s cubic-bezier(.34,1.56,.64,1) both;
+}
+.sj-floater.logo{ border-radius: 18px; padding: 6px; }
+.sj-floater img{ width: 100%; height: 100%; object-fit: cover; display: block; }
+.sj-floater.logo img{ object-fit: contain; }
+@keyframes sjBob{
+  0%,100%{ transform: translateY(0) rotate(-3deg); }
+  50%{ transform: translateY(-14px) rotate(3deg); }
+}
+@keyframes sjPop{
+  from{ opacity: 0; scale: .3; }
+  to{ opacity: 1; scale: 1; }
+}
+
+.sj-badge{
+  display: inline-flex; align-items: center; gap: .5rem;
+  padding: .45rem 1rem;
+  border-radius: 9999px;
+  background: rgba(255,255,255,.14);
+  border: 1px solid rgba(255,255,255,.3);
+  backdrop-filter: blur(8px);
+  font-weight: 700; letter-spacing: .12em; text-transform: uppercase; font-size: .8rem;
+}
+.sj-dot{
+  width: 8px; height: 8px; border-radius: 9999px; background: #5CFFB0;
+  box-shadow: 0 0 0 0 rgba(92,255,176,.7);
+  animation: sjPing 1.6s infinite;
+}
+@keyframes sjPing{
+  0%{ box-shadow: 0 0 0 0 rgba(92,255,176,.7); }
+  100%{ box-shadow: 0 0 0 12px rgba(92,255,176,0); }
+}
+
+.sj-title{
+  font-weight: 900;
+  line-height: .95;
+  letter-spacing: -.02em;
+  font-size: clamp(2.6rem, 8vw, 6.5rem);
+  text-shadow: 0 10px 40px rgba(6,26,92,.45);
+}
+.sj-title .shine{
+  background: linear-gradient(90deg, #fff 0%, #9FD6FF 25%, #fff 50%, #9FD6FF 75%, #fff 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent;
+  animation: sjShine 4s linear infinite;
+}
+@keyframes sjShine{ to{ background-position: 200% center; } }
+
+.sj-cta{
+  display: inline-flex; align-items: center; gap: .6rem;
+  padding: 1rem 2.2rem;
+  border-radius: 9999px;
+  background: #fff; color: #0E55E6;
+  font-weight: 900; font-size: 1.2rem;
+  box-shadow: 0 14px 40px rgba(6,26,92,.45);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.sj-cta:hover{ transform: translateY(-3px) scale(1.04); box-shadow: 0 20px 50px rgba(6,26,92,.55); }
+.sj-cta .arrow{ transition: transform .2s ease; }
+.sj-cta:hover .arrow{ transform: translateX(5px); }
+
+/* entrées en cascade (rejouées à chaque affichage de la slide) */
+.sj-in{ animation: sjRise .8s cubic-bezier(.2,.8,.2,1) both; }
+.sj-d1{ animation-delay: .1s; } .sj-d2{ animation-delay: .25s; }
+.sj-d3{ animation-delay: .4s; } .sj-d4{ animation-delay: .55s; }
+@keyframes sjRise{
+  from{ opacity: 0; transform: translateY(30px); }
+  to{ opacity: 1; transform: translateY(0); }
+}
+
+/* Slide 2 : cartes rôles */
+.sj-role{
+  position: relative;
+  border-radius: 28px;
+  padding: clamp(20px, 3vw, 34px);
+  background: rgba(255,255,255,.12);
+  border: 1px solid rgba(255,255,255,.28);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 20px 60px rgba(6,26,92,.35);
+  transition: transform .3s ease, background .3s ease;
+  overflow: hidden;
+}
+.sj-role:hover{ transform: translateY(-6px) rotate(-.4deg); background: rgba(255,255,255,.18); }
+.sj-role::before{
+  content: ""; position: absolute; inset: 0 0 auto 0; height: 5px;
+  background: var(--role-accent);
+}
+.sj-role-icon{
+  width: 76px; height: 76px; border-radius: 22px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--role-accent);
+  box-shadow: 0 10px 30px rgba(6,26,92,.35);
+  margin: 0 auto 14px;
+}
+.sj-mission{
+  background: rgba(255,255,255,.95); color: #0B2A7A;
+  border-radius: 16px; padding: 12px 16px;
+  font-weight: 700;
+}
+.sj-point{
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(255,255,255,.08);
+  transition: background .2s ease, transform .2s ease;
+}
+.sj-point:hover{ background: rgba(255,255,255,.16); transform: translateX(4px); }
+.sj-point .emo{
+  font-size: 1.4rem; width: 42px; height: 42px; flex: none;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 12px; background: rgba(255,255,255,.15);
+}
+
+.sj-vs{
+  width: 76px; height: 76px; border-radius: 9999px;
+  display: flex; align-items: center; justify-content: center;
+  background: #fff; color: #0E55E6;
+  font-weight: 900; font-size: 1.6rem;
+  box-shadow: 0 0 0 8px rgba(255,255,255,.18), 0 14px 40px rgba(6,26,92,.5);
+  animation: pulse 2s infinite;
+}
+
+@media (prefers-reduced-motion: reduce){
+  .sj-hero, .sj-blob, .sj-floater, .sj-title .shine, .sj-in, .sj-vs, .sj-dot{ animation: none !important; }
+}
+
   </style>
 </head>
 
@@ -232,61 +410,88 @@ main{
   </nav>
 
   <!-- Slide 1 -->
-  <div class="slide active startup-gradient items-center justify-center text-center text-white pt-20">
-    <div class="max-w-4xl mx-auto px-6">
-      <div class="mb-8">
-        <svg class="w-24 h-24 mx-auto mb-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-        </svg>
-      </div>
-      <h1 id="gameTitle" class="text-6xl font-bold mb-4 pulse-animation">Recrute-moi si tu peux</h1>
-      <p id="gameSubtitle" class="text-2xl opacity-90">Trouve ton match parfait !</p>
+  <div class="slide active sj-hero items-center justify-center text-center">
+    <div class="sj-grid"></div>
+    <div class="sj-blob b1"></div>
+    <div class="sj-blob b2"></div>
+    <div class="sj-blob b3"></div>
 
+    <!-- candidats & entreprises qui flottent autour du titre -->
+    <div class="sj-floaters" aria-hidden="true">
+      <div class="sj-floater" style="top:12%; left:8%; animation-delay:0s, .1s"><img src="./candidates/faustine.jpg" alt=""></div>
+      <div class="sj-floater logo" style="top:20%; right:10%; animation-delay:-1s, .2s"><img src="./companies/Inolab.JPG" alt=""></div>
+      <div class="sj-floater" style="bottom:16%; left:12%; animation-delay:-2s, .3s"><img src="./candidates/eden.jpg" alt=""></div>
+      <div class="sj-floater logo" style="bottom:12%; right:14%; animation-delay:-3s, .4s"><img src="./companies/Foxy.JPG" alt=""></div>
+      <div class="sj-floater" style="top:48%; left:3%; animation-delay:-4s, .5s"><img src="./candidates/marina.jpg" alt=""></div>
+      <div class="sj-floater logo" style="top:52%; right:4%; animation-delay:-5s, .6s"><img src="./companies/Digi-world.JPG" alt=""></div>
+      <div class="sj-floater" style="top:6%; left:42%; animation-delay:-2.5s, .7s"><img src="./candidates/nicolas.jpg" alt=""></div>
+      <div class="sj-floater logo" style="bottom:4%; left:46%; animation-delay:-1.5s, .8s"><img src="./companies/Agence-tech.JPG" alt=""></div>
+    </div>
+
+    <div class="relative z-10 max-w-4xl mx-auto px-6">
+      <div class="sj-in sj-d1 mb-6">
+        <span class="sj-badge"><span class="sj-dot"></span>Speed recruiting · STRATE-JEUX</span>
+      </div>
+      <h1 id="gameTitle" class="sj-title sj-in sj-d2 mb-6">
+        Recrute-moi<br><span class="shine">si tu peux</span>
+      </h1>
+      <p id="gameSubtitle" class="sj-in sj-d3 text-xl md:text-2xl font-semibold opacity-90 mb-10">
+        8 candidats · 8 entreprises · 1 match parfait à trouver ⚡
+      </p>
+      <div class="sj-in sj-d4">
+        <button onclick="nextSlide()" class="sj-cta">
+          C'est parti <span class="arrow">→</span>
+        </button>
+      </div>
     </div>
   </div>
 
   <!-- Slide 2: Rôles -->
-  <div class="slide bg-white items-center justify-center pt-20">
-    <div class="max-w-6xl mx-auto px-6">
-      <h2 class="text-4xl font-bold text-center mb-12 text-gray-800">Les Rôles</h2>
-      <div class="grid md:grid-cols-2 gap-8">
-        <div class="rounded-2xl p-8 text-white" style="background-color: #204ECF;">
-          <div class="text-center mb-6">
-            <svg class="w-16 h-16 mx-auto mb-4" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-            </svg>
-            <h3 class="text-2xl font-bold">Candidats</h3>
+  <div class="slide sj-hero items-center justify-center">
+    <div class="sj-grid"></div>
+    <div class="sj-blob b1"></div>
+    <div class="sj-blob b2"></div>
+
+    <div class="relative z-10 max-w-6xl mx-auto px-6 w-full">
+      <div class="text-center mb-8 md:mb-10">
+        <div class="sj-in sj-d1 mb-3"><span class="sj-badge">Choisis ton camp</span></div>
+        <h2 class="sj-in sj-d2 text-4xl md:text-5xl font-black" style="text-shadow:0 8px 30px rgba(6,26,92,.4)">Les Rôles</h2>
+      </div>
+
+      <div class="grid md:grid-cols-[1fr_auto_1fr] gap-6 md:gap-8 items-center">
+        <div class="sj-role sj-in sj-d2" style="--role-accent:#3FA9FF;">
+          <div class="text-center mb-5">
+            <div class="sj-role-icon">
+              <svg class="w-10 h-10" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+              </svg>
+            </div>
+            <h3 class="text-3xl font-black">Candidats</h3>
           </div>
-          <div class="space-y-4">
-            <div class="flex items-start"><span class="text-2xl mr-3">🎯</span>
-              <p><strong>Mission :</strong> Convaincre de votre potentiel et analyser l'entreprise</p>
-            </div>
-            <div class="flex items-start"><span class="text-2xl mr-3">💡</span>
-              <p>Mettez en avant vos compétences techniques et soft skills</p>
-            </div>
-            <div class="flex items-start"><span class="text-2xl mr-3">🔍</span>
-              <p>Évaluez si l'entreprise correspond à vos attentes</p>
-            </div>
+          <div class="sj-mission mb-4">🎯 Mission : Convaincre de votre potentiel et analyser l'entreprise</div>
+          <div class="space-y-2">
+            <div class="sj-point"><span class="emo">💡</span><p>Mettez en avant vos compétences techniques et soft skills</p></div>
+            <div class="sj-point"><span class="emo">🔍</span><p>Évaluez si l'entreprise correspond à vos attentes</p></div>
           </div>
         </div>
 
-        <div class="rounded-2xl p-8 text-white" style="background-color: #204ECF;">
-          <div class="text-center mb-6">
-            <svg class="w-16 h-16 mx-auto mb-4" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M20 6h-2.18c.11-.31.18-.65.18-1a2.996 2.996 0 0 0-5.5-1.65l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2z" />
-            </svg>
-            <h3 class="text-2xl font-bold">Recruteurs</h3>
+        <div class="flex justify-center sj-in sj-d3">
+          <div class="sj-vs">VS</div>
+        </div>
+
+        <div class="sj-role sj-in sj-d4" style="--role-accent:#061A5C;">
+          <div class="text-center mb-5">
+            <div class="sj-role-icon">
+              <svg class="w-10 h-10" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M20 6h-2.18c.11-.31.18-.65.18-1a2.996 2.996 0 0 0-5.5-1.65l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2z" />
+              </svg>
+            </div>
+            <h3 class="text-3xl font-black">Recruteurs</h3>
           </div>
-          <div class="space-y-4">
-            <div class="flex items-start"><span class="text-2xl mr-3">📋</span>
-              <p><strong>Mission :</strong> Évaluer les compétences et l'adéquation au poste</p>
-            </div>
-            <div class="flex items-start"><span class="text-2xl mr-3">🤝</span>
-              <p>Analysez les soft skills et la personnalité</p>
-            </div>
-            <div class="flex items-start"><span class="text-2xl mr-3">⚡</span>
-              <p>Identifiez le potentiel et la motivation</p>
-            </div>
+          <div class="sj-mission mb-4">📋 Mission : Évaluer les compétences et l'adéquation au poste</div>
+          <div class="space-y-2">
+            <div class="sj-point"><span class="emo">🤝</span><p>Analysez les soft skills et la personnalité</p></div>
+            <div class="sj-point"><span class="emo">⚡</span><p>Identifiez le potentiel et la motivation</p></div>
           </div>
         </div>
       </div>
@@ -501,7 +706,7 @@ main{
     { name: "Aniq SAPA",      color: "#1CE8E5", hiddenRole: "Chef de Projet Informatique", avatar: "./candidates/aniq.jpg" },
     { name: "Clyde MARTIN",   color: "#E1A9F5", hiddenRole: "Technicien Support Informatique", avatar: "./candidates/clyde.jpg" },
     { name: "Lou DEBOUIS",    color: "#FFCB3B", hiddenRole: "Ingénieur Cybersécurité", avatar: "./candidates/lou.jpg" },
-    { name: "Marina COSTA",   color: "#ACE6B2", hiddenRole: "UI/UX Designer",        avatar: "./candidates/marina.jpg" },
+    { name: "Marina DACOSTA", color: "#ACE6B2", hiddenRole: "UI/UX Designer",        avatar: "./candidates/marina.jpg" },
     { name: "Eden CETIN",     color: "#FF7575", hiddenRole: "Architecte Cloud",      avatar: "./candidates/eden.jpg" }
   ];
 
@@ -523,7 +728,7 @@ main{
     "Aniq SAPA": "Agili pro",
     "Clyde MARTIN": "ARNAUD",
     "Lou DEBOUIS": "Foxy",
-    "Marina COSTA": "Agence tech",
+    "Marina DACOSTA": "Agence tech",
     "Eden CETIN": "Digi World"
   };
 
@@ -535,6 +740,14 @@ main{
     try {
       candidateChoicesData = JSON.parse(localStorage.getItem(LS_KEYS.candidate) || "{}");
       recruiterChoicesData = JSON.parse(localStorage.getItem(LS_KEYS.recruiter) || "{}");
+      // Migration : "Marina COSTA" → "Marina DACOSTA"
+      if (candidateChoicesData["Marina COSTA"]) {
+        candidateChoicesData["Marina DACOSTA"] = candidateChoicesData["Marina COSTA"];
+        delete candidateChoicesData["Marina COSTA"];
+      }
+      Object.keys(recruiterChoicesData).forEach(k => {
+        if (recruiterChoicesData[k] === "Marina COSTA") recruiterChoicesData[k] = "Marina DACOSTA";
+      });
     } catch {
       candidateChoicesData = {};
       recruiterChoicesData = {};
